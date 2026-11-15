@@ -710,3 +710,21 @@
 #app:not(.v2-advanced) #banner {
   display: none !important;
 }
+
+/* country filter under the category chips (Explore and the A/B picker) */
+.v2-country {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.v2-country select {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 10px;
+  font-size: 14px;
+}

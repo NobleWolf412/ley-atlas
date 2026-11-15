@@ -1,4 +1,6 @@
 // Panel and button event wiring
+import { flyToCountry } from './site-lists.js';
+import { exploreResults } from './screens/explore.js';
 import { $ } from '../core/util.js';
 import { analyse } from '../domain/analysis.js';
 import { DISP_CATS } from '../domain/categories.js';
@@ -119,20 +121,24 @@ export function initEvents() {
     if (e.target.id === 'v2search') {
       V2.query = e.target.value;
       V2.limit = 60;
-      const pos = e.target.selectionStart;
+      // only the results are redrawn, so the search box keeps its focus and the keyboard stays up
       clearTimeout(V2.st);
       V2.st = setTimeout(() => {
-        v2Render();
-        const i = $('#v2search');
-        if (i) {
-          i.focus();
-          i.setSelectionRange(pos, pos);
-        }
-      }, 140);
+        const el = $('#v2xresults');
+        if (el) el.innerHTML = exploreResults();
+        else v2Render();
+      }, 50);
     }
     if (e.target.id === 'v2name' && S.work) S.work.name = e.target.value;
   });
   $('#v2panel').addEventListener('change', e => {
+    if (e.target.matches('[data-country]')) {
+      V2.country = e.target.value;
+      V2.limit = 60;
+      if (V2.country) flyToCountry(V2.country); // show the country that was picked
+      v2Render();
+      return;
+    }
     if (e.target.id === 'v2global' && S.work) v2SetGlobal(e.target.checked);
     if (e.target.matches('[data-corronly]')) {
       S.corridorOnly = e.target.checked;

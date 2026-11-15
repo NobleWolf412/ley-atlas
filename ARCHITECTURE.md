@@ -95,6 +95,8 @@ sequenceDiagram
 
 **3D flight.** `features/fly-line.js` opens a full-screen MapLibre GL view of the active line (satellite + terrain tiles, no key). The engine and its worker are loaded with `import()` only when someone flies. All the maths (path, camera position, what is being passed) is in `core/flight.js` with tests. It is the first use of the 3D engine; the research map is still the 2D canvas in `map/`.
 
+**Search.** `core/text-search.js` (accent folding, match ranking, top-k ordering) and `core/countries.js` are pure and tested. `domain/countries.js` gives every site a country. `ui/site-lists.js` filters and ranks; while typing, only the results container (`#v2xresults`, `#v2bresults`) is redrawn.
+
 **Share links.** `core/share.js` encodes and decodes the address (`?a=…&b=…`, `?p=…`, `?l=…`, `?c=…`); `features/share-link.js` builds one from the current state and applies one at start-up.
 
 - Modules do **no work when imported**: at module level there are only functions and constant literals. Anything that needs data, the DOM or another module runs inside the module's `initX()` function.

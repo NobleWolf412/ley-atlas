@@ -1,5 +1,15 @@
 # Ley Atlas changelog
 
+## 2.4 (15 Nov 2026): search you can steer
+
+From Matt: "the search functionality should be more intuitive, maybe filter by country… when I type it lags a bit."
+
+- **Filter by country.** A Country drop-down sits under the category chips, in Search and in the point A / point B pickers. It lists every country that has sites in the chosen category, with counts (for example France 1,398). In Search, picking a country also moves the map there.
+- **Every site now has a country.** Star forts and castles came with one; UNESCO, Roman, Pleiades and wonder sites are placed using the world outline in the app. The country shows under the site's name. The outline is coarse, so a few sites on small islands or right on a border may be missing a country or carry the neighbour's.
+- **Best matches first.** While you type, names that start with what you typed come first, then names containing it, then matches by type or country. Typing "castle france" lists castles in France. Before, results were simply nearest-first, and any text containing the letters counted (so "france" matched "San Francesco").
+- **Accents don't matter:** "chateau" finds Château, "sao" finds São.
+- **Typing is about twice as quick.** Only the result rows are redrawn (the search box is left alone, so the phone keyboard no longer flickers), only the rows on screen are sorted, and the wait after each key is shorter. Measured on a slowed-down test device, per key: Search 227 → 107 ms, point A picker 184 → 80 ms, point B picker 158 → 80 ms.
+
 ## 2.3.2 (15 Nov 2026): the line card makes sense, updates announce themselves
 
 From Matt: "if I want to dismiss it, there's no way to. And I never actually saved it. I go to My lines and it shows zero."

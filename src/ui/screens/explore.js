@@ -3,7 +3,7 @@ import { S } from '../../state/state.js';
 import { findPoint } from '../../domain/points.js';
 import { depInfo } from '../../domain/underground.js';
 import { V2 } from '../../state/preferences.js';
-import { v2Chips, v2Filtered, v2SiteRows } from '../site-lists.js';
+import { NO_MATCH, v2Chips, v2CountrySelect, v2Filtered, v2SiteRows } from '../site-lists.js';
 import { siteIcon } from '../../render/icons.js';
 import { esc, nf } from '../../core/util.js';
 import { TYPENAME } from '../../domain/site-types.js';
@@ -13,12 +13,30 @@ import { satUrl } from '../../core/format.js';
 import { DISPBY } from '../../domain/categories.js';
 import { ROMAN } from '../../data/datasets.js';
 
+const exploreOptions = () => ({
+  query: V2.query,
+  cat: V2.cat,
+  country: V2.country,
+  sort: V2.sort,
+  inView: V2.inView,
+  limit: V2.limit,
+});
+/** The part of Explore that changes while typing: the count and the rows. */
+export function exploreResults(arr = v2Filtered(exploreOptions())) {
+  const shown = arr.slice(0, V2.limit);
+  return (
+    `<p class="v2-muted" style="margin:4px 0 2px">${nf(arr.length)} ${V2.query.trim() ? `result${arr.length === 1 ? '' : 's'}, best matches first` : `site${arr.length === 1 ? '' : 's'}, nearest first`}</p>` +
+    `<div id="v2sitelist">${v2SiteRows(shown, { ab: false }) || NO_MATCH}</div>` +
+    (arr.length > shown.length
+      ? `<button class="v2-action full" data-v2="more" style="margin-top:10px">Show ${nf(Math.min(60, arr.length - shown.length))} more</button>`
+      : '')
+  );
+}
 export function v2Explore() {
   const s = S.sel?.type === 'site' ? findPoint(S.sel.id) : null,
     dep = S.sel?.type === 'dep' ? depInfo(S.sel.k) : null;
-  const o = { query: V2.query, cat: V2.cat, sort: V2.sort, inView: V2.inView },
-    arr = v2Filtered(o),
-    shown = arr.slice(0, V2.limit);
+  const o = exploreOptions(),
+    arr = v2Filtered(o);
   const card = s
     ? `<div class="v2-card tinted"><div class="v2-row" style="justify-content:flex-start;gap:8px">${siteIcon(s)}<h3 style="margin:0">${esc(s.n)}</h3></div><div class="v2-muted" style="margin-top:4px">${esc(TYPENAME[s.cat] || s.cat)}${s.reg ? ' · ' + esc(s.reg) : ''}${s.built ? ' · ' + esc(s.built) : ''}</div>${lmCardLine(s)}<div class="v2-actions">${V2.pick.a && !V2.pick.b && V2.pick.a !== s.id ? v2Button('site-line', `Draw the line to here`, 'primary') + v2Button('site-restart', 'Start here instead') : v2Button('site-restart', 'Start a line here', 'primary')}${v2Button('site-full', 'More details')}<a class="v2-action" href="${satUrl(s.lat, s.lon, 18)}" target="_blank" rel="noopener">Google Maps ↗</a></div>${s.stone ? `<p class="v2-muted" style="margin-top:8px">Stonework: masonry ${s.stone.masonry}/4, precision ${s.stone.precision}/4${s.stone.tons ? `, largest block ${nf(s.stone.tons)} t` : ''}${s.stone.rock ? ', rock-cut' : ''}.</p>` : ''}<div id="v2ug" class="v2-muted" style="margin-top:6px">Checking what lies underground nearby…</div></div>`
     : dep
@@ -45,10 +63,7 @@ export function v2Explore() {
         (V2.cat === 'roman'
           ? `<p class="v2-muted" style="margin:2px 0 6px">${nf(ROMAN.rows.length)} dated Roman-era monuments from Pleiades, plus sites whose name says Roman${S.src.pleiades ? '' : ` (turn on Pleiades temples in Layers for ${ROMAN.plRoman.length} more)`}. Thorough, not complete.</p>`
           : '') +
-        `<p class="v2-muted" style="margin:4px 0 2px">${nf(arr.length)} site${arr.length === 1 ? '' : 's'}, nearest first</p>` +
-        `<div id="v2sitelist">${v2SiteRows(shown, { ab: false }) || '<div class="v2-empty">No site matches. Try another category or clear the search.</div>'}</div>` +
-        (arr.length > shown.length
-          ? `<button class="v2-action full" data-v2="more" style="margin-top:10px">Show ${nf(Math.min(60, arr.length - shown.length))} more</button>`
-          : ''))
+        v2CountrySelect(o, 'data-country') +
+        `<div id="v2xresults">${exploreResults(arr)}</div>`)
   );
 }

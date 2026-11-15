@@ -33,6 +33,7 @@ export const V2 = {
   faultCache: null,
   plateCache: null,
   magCache: null,
+  country: '', // Explore's country filter ('' = all countries)
   browser: null,
 };
 export function v2Persist() {
