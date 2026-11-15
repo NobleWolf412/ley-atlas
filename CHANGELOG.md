@@ -5,6 +5,7 @@
 - The map no longer depends on the features drawn on it: features now plug into the map and the panels through small extension points (events, draw layers, screens, actions). This is the groundwork for swapping in a 3D map engine.
 - Big files split up: panels by screen, map drawing into base layer, icons, labels and readout; underground data lookups separated from underground drawing.
 - A lint rule now blocks code in the lower layers from reaching up into screens and features.
+- **Fixed:** a share link opened in a background tab did nothing until the tab was brought to the front.
 - Checked against 2.1: identical start screen pixel for pixel (phone and desktop) and identical results through drawing a line, line match, menus, layers and both tests.
 
 ## 2.2 (14 Nov 2026): opens fast, installs like an app, lines can be shared
