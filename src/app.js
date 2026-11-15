@@ -74,8 +74,8 @@ export function startApp() {
   initSwipeDelete();
   initEndpointDrag();
   initBoot();
-  // after the first layout pass, so the camera can frame a shared line
-  requestAnimationFrame(openSharedLink);
+  // not in requestAnimationFrame: that never fires while the tab is in the background
+  openSharedLink();
 }
 
 /**
