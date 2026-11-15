@@ -1,4 +1,5 @@
 // Creating lines: site to site or freehand
+import { registerAction } from '../ui/registry.js';
 import { GEO } from '../core/geo.js';
 import { $, PIR } from '../core/util.js';
 import { activeLine } from '../domain/lines.js';
@@ -227,4 +228,18 @@ export function v2SaveWork() {
   toast('Line saved');
 }
 
-export function initCreateLines() {}
+/** Brings the unsaved line back onto the map (from My lines). */
+function openWorkLine() {
+  if (!S.work) return;
+  S.active = 'work';
+  S.focus = true;
+  V2.tab = 'draw';
+  changed();
+  v2LineChanged();
+  v2Render();
+  flyToLine(activeLine());
+}
+
+export function initCreateLines() {
+  registerAction('open-work', openWorkLine);
+}

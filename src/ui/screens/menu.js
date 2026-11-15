@@ -12,7 +12,12 @@ export function v2Menu() {
     `<button class="v2-menurow" data-v2="${act}"><span class="ic" aria-hidden="true">${ic}</span><span class="nm"><strong>${t}</strong><small>${sub}</small></span><span aria-hidden="true">›</span></button>`;
   return (
     v2Peek('Menu') +
-    row('menu-lines', '▤', 'My lines', `${S.userLines.length} saved · backup and export`) +
+    row(
+      'menu-lines',
+      '▤',
+      'My lines',
+      `${S.userLines.length} saved${S.work ? ' · 1 not saved yet' : ''} · backup and export`,
+    ) +
     row('menu-layers', '◧', 'Map layers', 'What shows on the map: site types, minerals, faults, lines') +
     row('tool-lab', '◈', 'Is it unusual?', 'Test a line or a set of sites against random ones') +
     row('tool-data', '⇪', 'Add sites & data sources', 'Import your own list; where every dataset comes from')
@@ -31,7 +36,14 @@ export function v2Saved() {
     )
     .join('');
   return (
-    v2Peek(`${lines.length} saved line${lines.length !== 1 ? 's' : ''}`) +
+    v2Peek(
+      `${lines.length} saved line${lines.length !== 1 ? 's' : ''}${S.work ? ' · 1 not saved yet' : ''}`,
+    ) +
+    (S.work
+      ? `<div class="v2-card accent"><div class="v2-row"><h3>Not saved yet</h3><span class="v2-label">1</span></div>` +
+        `<button class="v2-lrow" data-v2="open-work"><span class="v2-swatch" style="background:${V2.lineColor || C.cyan}"></span><span class="v2-description"><strong>${esc(S.work.name || 'Untitled line')}</strong><small>The line you drew last. It is only kept until you draw another.</small></span><span aria-hidden="true">›</span></button>` +
+        `<div class="v2-actions">${v2Button('save-work', 'Save line', 'primary')}${v2Button('discard', 'Remove', 'danger')}</div></div>`
+      : '') +
     `<p class="v2-sub" style="margin:0 0 10px">Kept in this browser. Make a backup to keep them safe or move them to another device.</p>` +
     `<div class="v2-card"><div class="v2-row"><h3>Saved lines</h3><span class="v2-label">${lines.length}</span></div>${list ? list + '<p class="v2-muted" style="margin:8px 0 0">Tap a line to open it. Swipe it left to delete.</p>' : '<div class="v2-empty">No saved lines yet. Draw a line, then tap Save line.</div>'}<div class="v2-actions">${v2Button('new-line', '＋ New line', 'primary')}${S.work ? v2Button('tab-draw', 'Finish the working line') : ''}</div></div>` +
     `<div class="v2-card"><h3>Backup and export</h3><p class="v2-sub">A backup holds your lines, markers, imports and settings.</p><div class="v2-actions">${v2Button('export-backup', 'Save a backup', 'primary')}${v2Button('import-backup', 'Restore a backup')}</div><div class="v2-kicker" style="margin-top:10px">Export</div><div class="v2-actions">${v2Button('export-geo', 'Lines (GeoJSON)')}${v2Button('export-csv', 'Sites along the line (CSV)')}${v2Button('export-png', 'Map picture')}</div></div>` +

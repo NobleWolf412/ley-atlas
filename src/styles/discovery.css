@@ -244,6 +244,8 @@ svg.ic {
 #v2alert .t {
   flex: 1;
   min-width: 0;
+}
+#v2alert-go {
   cursor: pointer;
 }
 #v2alert b {
@@ -258,12 +260,28 @@ svg.ic {
   line-height: 1.45;
   color: var(--muted);
 }
-#v2alert .go {
-  display: block;
-  margin-top: 4px;
-  font-size: 11.5px;
-  font-weight: 700;
+#v2alert .acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+#v2alert .acts .v2-action {
+  min-height: 36px;
+  padding: 6px 11px;
+  font-size: 12.5px;
+}
+#v2alert .tag {
+  display: inline-block;
+  margin: 0 0 4px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--accent-line);
   color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 #v2alert .x {
   appearance: none;

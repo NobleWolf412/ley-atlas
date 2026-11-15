@@ -197,7 +197,7 @@ export function v2HandleAction(action, id) {
         changed();
         V2.disc = null;
         $('#v2alert').hidden = true;
-        V2.tab = 'draw';
+        if (V2.tab !== 'saved') V2.tab = 'draw'; // removed from My lines: stay there
         v2Render();
       });
       break;

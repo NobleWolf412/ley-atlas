@@ -1,4 +1,6 @@
 // Discovery: what lies along the active line
+import { changed } from '../ui/sheet.js';
+import { toast } from '../ui/intro.js';
 import { addDrawLayer } from '../map/hooks.js';
 import { GEO } from '../core/geo.js';
 import { $, D2R, PIR, R, esc, nf } from '../core/util.js';
@@ -170,6 +172,8 @@ export function v2Alert() {
     key =
       L.id +
       '|' +
+      (L.short || L.name) +
+      '|' +
       (d
         ? d.kind + d.dep.total + d.fau.crossed + d.sites.length + (d.mg.max ? Math.round(d.mg.max.v) : '')
         : '') +
@@ -179,12 +183,44 @@ export function v2Alert() {
   el.hidden = false;
   if (el.dataset.k === key) return;
   el.dataset.k = key;
-  el.innerHTML = `<div class="t" id="v2alert-go" role="button" tabindex="0"><b>${esc(L.short || L.name)}</b><p class="s">${esc(v2Summary(d))}</p><span class="go">Open →</span></div><button class="x" id="v2alert-new" aria-label="Draw a new line" title="Draw a new line">＋</button>`;
-  $('#v2alert-go').onclick = () => v2ChangeTab(L.id === 'work' ? 'draw' : 'analyze');
+  const unsaved = L.id === 'work';
+  el.innerHTML =
+    `<div class="t"><div id="v2alert-go" role="button" tabindex="0" aria-label="Open this line">` +
+    (unsaved ? `<span class="tag">Not saved yet</span>` : '') +
+    `<b>${esc(L.short || L.name)}</b><p class="s">${esc(v2Summary(d))}</p></div>` +
+    `<div class="acts"><button class="v2-action primary" data-act="fly">Fly it in 3D</button>` +
+    (unsaved ? `<button class="v2-action" data-act="save-work">Save</button>` : '') +
+    `<button class="v2-action" data-act="open">Open →</button></div></div>` +
+    `<button class="x" id="v2alert-x" aria-label="Put this line away" title="Put this line away">✕</button>`;
+  const open = () => v2ChangeTab(unsaved ? 'draw' : 'analyze');
+  $('#v2alert-go').onclick = open;
   $('#v2alert-go').onkeydown = e => {
-    if (e.key === 'Enter') $('#v2alert-go').click();
+    if (e.key === 'Enter') open();
   };
-  $('#v2alert-new').onclick = () => v2HandleAction('new-line');
+  for (const b of el.querySelectorAll('[data-act]'))
+    b.onclick = () => (b.dataset.act === 'open' ? open() : v2HandleAction(b.dataset.act));
+  $('#v2alert-x').onclick = putLineAway;
+}
+/**
+ * Clears the active line off the map without deleting it. A saved line stays in My lines;
+ * a line that was never saved stays there too, marked "Not saved yet".
+ */
+export function putLineAway() {
+  const L = activeLine();
+  if (!L) return;
+  const mine = L.id === 'work' || S.userLines.some(u => u.id === L.id);
+  S.active = null;
+  V2.disc = null;
+  V2.hl = null;
+  changed();
+  toast(
+    L.id === 'work'
+      ? 'Line put away, not saved yet. Find it in ☰ → My lines.'
+      : mine
+        ? 'Line put away. Find it in ☰ → My lines.'
+        : 'Line closed.',
+    4200,
+  );
 }
 export function v2Summary(d) {
   if (!d) return '';

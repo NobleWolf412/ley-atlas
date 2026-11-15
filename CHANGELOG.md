@@ -1,5 +1,15 @@
 # Ley Atlas changelog
 
+## 2.3.1 (15 Nov 2026): the line card makes sense
+
+From Matt: "if I want to dismiss it, there's no way to. And I never actually saved it. I go to My lines and it shows zero."
+
+- **The line card on the map now has buttons:** **Fly it in 3D**, **Save** (only for a line that is not saved yet) and **Open →**. Flying is one tap from the map.
+- **✕ puts the line away.** It clears the line off the map without deleting it, and "＋ Draw a line" comes back. A message says where it went. (The ＋ that used to sit there is gone; it started a new line, which is what "Draw a line" is for.)
+- **A line you have not saved is labelled "Not saved yet"** on the card.
+- **My lines shows the unsaved line too**, in its own "Not saved yet" box with Save line and Remove. The menu reads, for example, "0 saved · 1 not saved yet".
+- A line you put away stays away when you reopen the app.
+
 ## 2.3 (15 Nov 2026): Fly the line in 3D
 
 - **Fly it in 3D:** new button on the line card and on the "what's along it" screen. It opens a full-screen 3D view, swoops down to point A and flies the line over satellite imagery and real terrain.
