@@ -6,7 +6,7 @@ import { INTS } from '../domain/analysis.js';
 import { LINEBY, activeLine } from '../domain/lines.js';
 import { ALLP, findPoint, rebuildPoints, srcOn } from '../domain/points.js';
 import { bindUgTest, ugTestPanel } from './underground-test.js';
-import { DEPV, UG, UGBIT, depData, depVecs } from '../layers/underground.js';
+import { DEPV, UG, UGBIT, depData, depVecs } from '../domain/underground.js';
 import { flyTo } from '../map/camera.js';
 import { kForKm } from '../map/canvas.js';
 import { req } from '../map/draw.js';

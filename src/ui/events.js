@@ -5,7 +5,7 @@ import { DISP_CATS } from '../domain/categories.js';
 import { findPoint } from '../domain/points.js';
 import { v2SetGlobal, v2SetPoint, v2StartDraw } from '../features/create-lines.js';
 import { v2LineChanged } from '../features/discovery.js';
-import { depInfo, ugMask } from '../layers/underground.js';
+import { depInfo, ugMask } from '../domain/underground.js';
 import { req } from '../map/draw.js';
 import { fmtKm } from '../core/format.js';
 import { setView } from '../map/interaction.js';

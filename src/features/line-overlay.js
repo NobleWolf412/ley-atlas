@@ -1,17 +1,18 @@
 // Map overlay: drawing preview, A/B handles, highlights
+import { addDrawLayer } from '../map/hooks.js';
 import { GEO } from '../core/geo.js';
 import { findPoint } from '../domain/points.js';
-import { v2Ends } from '../features/create-lines.js';
-import { glowColor } from '../features/discovery.js';
-import { ctx } from './canvas.js';
-import { visible } from './draw.js';
-import { lineCoords } from './line-sampling.js';
+import { v2Ends } from './create-lines.js';
+import { glowColor } from './discovery.js';
+import { ctx } from '../map/canvas.js';
+import { visible } from '../map/draw.js';
+import { lineCoords } from '../map/line-sampling.js';
 import { C } from '../render/palette.js';
 import { V2 } from '../state/preferences.js';
 import { S } from '../state/state.js';
 
 // ---------- map overlay: drawing preview, A/B handles, highlighted finding ----------
-export function v2DrawOverlay(P, path) {
+function v2DrawOverlay(P, path) {
   let ends = null,
     preview = false;
   if (V2.drag) {
@@ -116,4 +117,8 @@ export function v2DrawOverlay(P, path) {
     }
   }
   ctx.restore();
+}
+
+export function initLineOverlay() {
+  addDrawLayer('top', v2DrawOverlay);
 }

@@ -1,4 +1,6 @@
 // Bottom sheet and legacy tabs
+import { on } from '../core/events.js';
+import { toast } from './intro.js';
 import { $, $$ } from '../core/util.js';
 import { analyse } from '../domain/analysis.js';
 import { buildLines } from '../domain/lines.js';
@@ -67,6 +69,13 @@ export function keepScroll(id, fn) {
 }
 
 export function initSheet() {
+  on('tiles:blocked', () => {
+    renderTab(S.tab);
+    toast(
+      'Satellite tiles are blocked in this viewer. Use the satellite button on the map, or open the HTML file in a browser.',
+      6000,
+    );
+  });
   (() => {
     const g = $('#grab'),
       el = $('#sheet');

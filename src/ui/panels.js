@@ -29,7 +29,7 @@ import {
 } from '../features/discovery.js';
 import { startFollow } from '../features/follow-line.js';
 import { LM, lmCardLine, lmMarkPicked, lmRankLine } from '../features/line-match.js';
-import { UG, UGNAME, depData, depInfo, magWord, plateLabel, undergroundAt } from '../layers/underground.js';
+import { UG, UGNAME, depData, depInfo, magWord, plateLabel, undergroundAt } from '../domain/underground.js';
 import { flyTo, flyToLine } from '../map/camera.js';
 import { H, W, cv, kForKm, proj } from '../map/canvas.js';
 import { draw, req } from '../map/draw.js';

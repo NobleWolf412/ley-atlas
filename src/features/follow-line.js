@@ -1,4 +1,5 @@
 // Follow this line
+import { on } from '../core/events.js';
 import { GEO } from '../core/geo.js';
 import { $, PIR } from '../core/util.js';
 import { MATCH } from '../domain/analysis.js';
@@ -88,5 +89,8 @@ export function stopFollow() {
 }
 
 export function initFollowLine() {
+  on('map:gesture-start', () => {
+    if (S.follow) stopFollow();
+  });
   $('#tickerstop').onclick = stopFollow;
 }

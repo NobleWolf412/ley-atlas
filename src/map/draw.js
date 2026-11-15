@@ -1,4 +1,5 @@
 // Map drawing loop
+import { highlightedSites, runDrawLayers } from './hooks.js';
 import * as d3 from 'd3';
 import { GEO } from '../core/geo.js';
 import { $, D2R, wrap } from '../core/util.js';
@@ -8,8 +9,6 @@ import { INTS, MATCH, MATCHBY } from '../domain/analysis.js';
 import { v2SiteVisible } from '../domain/categories.js';
 import { LINES, PRIMARY_BRG, activeLine, lineShown, ob } from '../domain/lines.js';
 import { ALLP, AUTO, FORTS, PT, shownP, srcOn } from '../domain/points.js';
-import { v2Glow, v2PreDraw } from '../features/discovery.js';
-import { LMHOT, lmFanDraw, lmPicking, lmTop, setLMHOT } from '../features/line-match.js';
 import { HITS_UG, drawMag, drawUnder, setHITS_UG } from '../layers/underground.js';
 import { borders110, cellRings, chunkPts, graticule, lakeRings, land110, outlineOf } from './basemap.js';
 import {
@@ -30,7 +29,6 @@ import {
   viewBounds,
 } from './canvas.js';
 import { lineCoords } from './line-sampling.js';
-import { v2DrawOverlay } from './overlay.js';
 import { drawTiles } from './tiles.js';
 import {
   ZM,
@@ -392,7 +390,7 @@ export function draw() {
       }
     ctx.restore();
   }
-  v2PreDraw();
+  runDrawLayers('beforeLines', P, path);
   const intro = S.intro,
     batches = new Map();
   for (const l of LINES) {
@@ -403,8 +401,7 @@ export function draw() {
     if (!bt) batches.set(k, (bt = { st: STY[l.style], wm, co: [] }));
     for (const sg of l.segs) for (const c of lineCoords(sg)) bt.co.push(c);
   }
-  v2Glow(path);
-  lmFanDraw(P);
+  runDrawLayers('underLines', P, path);
   for (const bt of batches.values()) strokeMulti(path, bt.co, bt.st, bt.wm);
   if (intro && intro.lineKm > 0) {
     const len = intro.lineKm,
@@ -509,7 +506,7 @@ export function draw() {
   };
   const clustering = v2ClusterBegin(rv),
     keyOnly = ZM === 'key';
-  setLMHOT(lmPicking() ? lmTop() : null);
+  const hot = highlightedSites(); // e.g. the best line matches while point B is being chosen
   for (const s of ALLP) {
     if (!shownP(s) || !ptInB(s.lat, s.lon, B)) continue;
     if (!v2SiteVisible(s) && !(S.sel && S.sel.id === s.id)) continue;
@@ -517,7 +514,7 @@ export function draw() {
       const m = MATCHBY.get(s.id);
       if (!m || m.status === 'out') continue;
     }
-    const isSel = (S.sel && S.sel.id === s.id) || (LMHOT && LMHOT.has(s.id)); // best matches while choosing B are always drawn in full
+    const isSel = (S.sel && S.sel.id === s.id) || (hot && hot.has(s.id)); // highlighted sites are always drawn in full
     if (s.set === 'castle' && !isSel && s.rank > (rv > 1500 ? 500 : rv > 500 ? 2000 : 1e9)) continue;
     if (keyOnly && !v2IsKey(s) && !v2Pinned(s)) {
       setZMHIDDEN(ZMHIDDEN + 1);
@@ -631,7 +628,7 @@ export function draw() {
       ctx.lineWidth = 2;
       ctx.stroke();
     }
-    if (lmPicking() && lmTop().has(s.id) && !sel) {
+    if (hot && hot.has(s.id) && !sel) {
       ctx.beginPath();
       ctx.arc(p[0], p[1], 15, 0, 7);
       ctx.strokeStyle = C.gold;
@@ -679,7 +676,7 @@ export function draw() {
     }
   }
   if (S.layers.labels) placeLabels(labels);
-  v2DrawOverlay(P, path);
+  runDrawLayers('top', P, path);
   updateHud();
 }
 export let CAMV = null;

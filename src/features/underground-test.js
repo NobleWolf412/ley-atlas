@@ -3,7 +3,7 @@ import { GEO } from '../core/geo.js';
 import { $, $$, esc, nf } from '../core/util.js';
 import { ALLP, shownP, srcOn } from '../domain/points.js';
 import { renderLab } from './random-test.js';
-import { UGBIT, depAnyWithin, faultNearest, landAt, magAt } from '../layers/underground.js';
+import { UGBIT, depAnyWithin, faultNearest, landAt, magAt } from '../domain/underground.js';
 import { S } from '../state/state.js';
 import { keepScroll } from '../ui/sheet.js';
 

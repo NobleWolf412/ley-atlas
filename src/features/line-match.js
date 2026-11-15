@@ -1,10 +1,11 @@
 // Line match: how promising is A to B versus nearby directions
+import { addDrawLayer, addSiteHighlighter } from '../map/hooks.js';
 import { deferredLoaded, whenDeferredLoaded } from '../data/datasets.js';
 import { GEO } from '../core/geo.js';
 import { PIR, R, esc, nf } from '../core/util.js';
 import { buildLines } from '../domain/lines.js';
 import { enabledPoints, findPoint } from '../domain/points.js';
-import { depData, faultData, magAt, plateData } from '../layers/underground.js';
+import { depData, faultData, magAt, plateData } from '../domain/underground.js';
 import { W, ctx } from '../map/canvas.js';
 import { req } from '../map/draw.js';
 import { C } from '../render/palette.js';
@@ -23,8 +24,7 @@ export const MSIG = [
   ['mag', 'Magnetic', 'var(--glow-both)'],
   ['site', 'Sites', 'var(--glow-site)'],
 ];
-export let LM = null,
-  LMHOT = null;
+export let LM = null;
 function lmBasis(A) {
   const a = GEO.vec(A.lat, A.lon);
   let e = [-a[1], a[0], 0];
@@ -471,9 +471,7 @@ export const lmPicking = () =>
 
 export function initLineMatch() {
   LM_R0 = 5 / R;
-}
-
-// Setters for variables that other modules change.
-export function setLMHOT(v) {
-  return (LMHOT = v);
+  addDrawLayer('underLines', P => lmFanDraw(P));
+  // while point B is being chosen, the best matches are always drawn in full and ringed
+  addSiteHighlighter(() => (lmPicking() ? lmTop() : null));
 }

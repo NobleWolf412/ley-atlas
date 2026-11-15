@@ -4,7 +4,7 @@ import { INTS } from '../domain/analysis.js';
 import { LINES, activeLine, lineShown } from '../domain/lines.js';
 import { ALLP, srcOn } from '../domain/points.js';
 import { TYPES, TYPESHORT } from '../domain/site-types.js';
-import { UG } from '../layers/underground.js';
+import { UG } from '../domain/underground.js';
 import { sw } from '../render/icons.js';
 import { iconSvg } from '../render/icons.js';
 import { C, STY } from '../render/palette.js';

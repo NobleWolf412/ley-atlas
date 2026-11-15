@@ -8,7 +8,7 @@ import { CS0, LINEBY, LINES, activeLine } from '../domain/lines.js';
 import { ALLP, BASE, srcOn } from '../domain/points.js';
 import { SOURCES, TYPES } from '../domain/site-types.js';
 import { openImport } from '../features/import.js';
-import { UG, UGBIT, depData } from '../layers/underground.js';
+import { UG, UGBIT, depData } from '../domain/underground.js';
 import { req } from '../map/draw.js';
 import { fmtKm } from '../core/format.js';
 import { setView } from '../map/interaction.js';

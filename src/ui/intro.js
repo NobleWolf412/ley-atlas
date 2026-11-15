@@ -1,4 +1,5 @@
 // Intro flight, callouts and toasts
+import { on } from '../core/events.js';
 import { $ } from '../core/util.js';
 import { anim, flyTo, setAnim } from '../map/camera.js';
 import { H, W, clampCam, kForKm } from '../map/canvas.js';
@@ -53,6 +54,11 @@ export function toast(msg, ms = 2600) {
 }
 
 export function initIntro() {
+  const stopIntro = () => {
+    if (S.intro) endIntro();
+  };
+  on('map:gesture-start', stopIntro);
+  on('map:wheel', stopIntro);
   $('#skip').onclick = () => {
     cancelAnimationFrame(anim);
     setAnim(null);

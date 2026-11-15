@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseCoords } from '../src/panels/forts-pane.js';
 import { parseImport, splitCSV } from '../src/features/import.js';
-import { dec } from '../src/map/basemap.js';
+import { dec } from '../src/core/polyline.js';
 
 describe('parseCoords', () => {
   it('reads degrees-minutes-seconds', () => {

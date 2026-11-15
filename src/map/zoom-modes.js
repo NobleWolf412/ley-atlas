@@ -1,8 +1,8 @@
 // What the map shows when zoomed out
+import { highlightedSites } from './hooks.js';
 import { $, nf } from '../core/util.js';
 import { MATCHBY } from '../domain/analysis.js';
 import { activeLine } from '../domain/lines.js';
-import { lmPicking, lmTop } from '../features/line-match.js';
 import { clear } from '../layers/underground.js';
 import { ctx } from './canvas.js';
 import { HITS } from './draw.js';
@@ -45,7 +45,7 @@ export function v2ClusterBegin(rv) {
 }
 export function v2Pinned(s) {
   if (S.sel?.id === s.id) return true;
-  if (V2.pick.a === s.id || (lmPicking() && lmTop().has(s.id))) return true;
+  if (V2.pick.a === s.id || highlightedSites()?.has(s.id)) return true;
   const L = activeLine();
   if (L && L.anchors.includes(s.id)) return true;
   const m = MATCHBY.get(s.id);

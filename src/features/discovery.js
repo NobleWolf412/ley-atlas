@@ -1,10 +1,11 @@
 // Discovery: what lies along the active line
+import { addDrawLayer } from '../map/hooks.js';
 import { GEO } from '../core/geo.js';
 import { $, D2R, PIR, R, esc, nf } from '../core/util.js';
 import { MATCH, analyse } from '../domain/analysis.js';
 import { activeLine } from '../domain/lines.js';
 import { enabledPoints } from '../domain/points.js';
-import { faultData, magAt, plateData } from '../layers/underground.js';
+import { faultData, magAt, plateData } from '../domain/underground.js';
 import { ctx } from '../map/canvas.js';
 import { req } from '../map/draw.js';
 import { lineCoords } from '../map/line-sampling.js';
@@ -204,4 +205,9 @@ export function v2LineChanged() {
   v2Discover();
   v2Alert();
   req();
+}
+
+export function initDiscovery() {
+  addDrawLayer('beforeLines', v2PreDraw);
+  addDrawLayer('underLines', (P, path) => v2Glow(path));
 }

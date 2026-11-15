@@ -5,7 +5,7 @@ import { CLASSES } from '../data/catalog.js';
 import { MATCH } from '../domain/analysis.js';
 import { LINEBY, lineUncAt } from '../domain/lines.js';
 import { catOn, findPoint, srcOn } from '../domain/points.js';
-import { DEPV, UG, UGBIT, depData, depVecs } from '../layers/underground.js';
+import { DEPV, UG, UGBIT, depData, depVecs } from '../domain/underground.js';
 import { fmtKm } from '../core/format.js';
 import { V2 } from '../state/preferences.js';
 import { S, persistImports } from '../state/state.js';

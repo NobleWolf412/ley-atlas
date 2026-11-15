@@ -1,10 +1,9 @@
 // Satellite tiles
+import { emit } from '../core/events.js';
 import { D2R } from '../core/util.js';
 import { H, W, ctx } from './canvas.js';
 import { req } from './draw.js';
 import { S } from '../state/state.js';
-import { toast } from '../ui/intro.js';
-import { renderTab } from '../ui/sheet.js';
 
 // ================= satellite tiles =================
 const tiles = new Map();
@@ -23,11 +22,7 @@ function tileImg(z, x, y) {
       if (!S.satFailed) {
         S.satFailed = true;
         S.layers.sat = false;
-        renderTab(S.tab);
-        toast(
-          'Satellite tiles are blocked in this viewer. Use the satellite button on the map, or open the HTML file in a browser.',
-          6000,
-        );
+        emit('tiles:blocked');
         req();
       }
     };

@@ -1,12 +1,10 @@
 // Endpoint dragging for freehand lines
-import { $, wrap } from '../core/util.js';
-import { v2ApplyEnds, v2Ends, v2SyncPick } from '../features/create-lines.js';
-import { v2Discover } from '../features/discovery.js';
-import { clampCam, cv, kForKm, proj } from './canvas.js';
-import { req, visible } from './draw.js';
+import { wrap } from '../core/util.js';
+import { v2ApplyEnds, v2Ends } from './create-lines.js';
+import { cv, proj } from '../map/canvas.js';
+import { req, visible } from '../map/draw.js';
 import { V2, v2IsAdvanced } from '../state/preferences.js';
 import { S } from '../state/state.js';
-import { renderChrome } from '../ui/map-chrome.js';
 import { v2Render } from '../ui/panels.js';
 
 const v2DragEnd = e => {
@@ -20,22 +18,6 @@ const v2DragEnd = e => {
   V2.tab = 'draw';
   v2Render();
 };
-export function v2Init() {
-  $('.brand h1').textContent = 'LEY ATLAS';
-  S.explored = true;
-  S.intro = null;
-  $('#explore').hidden = true;
-  $('#skip').hidden = true;
-  S.cam = { lon: 14, lat: 44, k: kForKm(innerWidth < 700 ? 3200 : 2600) };
-  clampCam();
-  v2SyncPick();
-  V2.tab = null;
-  V2.sort = 'near';
-  v2Discover();
-  v2Render();
-  renderChrome(); // map first: the panel opens only when something asks for it
-}
-
 export function initEndpointDrag() {
   // ---------- endpoint dragging for freehand lines ----------
   cv.addEventListener(

@@ -7,7 +7,7 @@ import { initState } from './state/state.js';
 import { initPoints } from './domain/points.js';
 import { initLines } from './domain/lines.js';
 import { initCanvas } from './map/canvas.js';
-import { initUnderground } from './layers/underground.js';
+import { initUnderground } from './domain/underground.js';
 import { initInteraction } from './map/interaction.js';
 import { initIntro } from './ui/intro.js';
 import { initMapChrome } from './ui/map-chrome.js';
@@ -25,9 +25,11 @@ import { initLineMatch } from './features/line-match.js';
 import { initPanels } from './ui/panels.js';
 import { initEvents } from './ui/events.js';
 import { initSwipeDelete } from './ui/swipe-delete.js';
-import { initEndpointDrag } from './map/endpoint-drag.js';
+import { initEndpointDrag } from './features/endpoint-drag.js';
+import { initDiscovery } from './features/discovery.js';
+import { initLineOverlay } from './features/line-overlay.js';
 import { initBoot } from './boot.js';
-import { resetUndergroundData } from './layers/underground.js';
+import { resetUndergroundData } from './domain/underground.js';
 import { resetLayerCounts } from './panels/layers-pane.js';
 import { resetLineUnderground } from './panels/lines-pane.js';
 import { resetDepPools } from './features/random-test.js';
@@ -37,6 +39,7 @@ import { V2 } from './state/preferences.js';
 import { v2Render } from './ui/panels.js';
 import { changed } from './ui/sheet.js';
 import { openSharedLink } from './features/share-link.js';
+import { initMapTaps } from './ui/map-taps.js';
 
 export function startApp() {
   initUtil();
@@ -49,6 +52,7 @@ export function startApp() {
   initCanvas();
   initUnderground();
   initInteraction();
+  initMapTaps();
   initIntro();
   initMapChrome();
   initFollowLine();
@@ -61,7 +65,9 @@ export function startApp() {
   initCategories();
   initCreateLines();
   initSiteLists();
+  initDiscovery(); // registers its draw layers before line match, so glows sit under the match fan
   initLineMatch();
+  initLineOverlay();
   initPanels();
   initEvents();
   initSwipeDelete();
