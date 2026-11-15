@@ -32,7 +32,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,json}'],
+        globPatterns: ['**/*.{js,mjs,css,html,png,json}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // the detailed basemap is 3.6 MB
         cleanupOutdatedCaches: true,
         runtimeCaching: [

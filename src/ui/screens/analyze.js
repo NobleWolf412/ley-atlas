@@ -114,7 +114,7 @@ export function v2Analyze() {
       ${L.note ? `<p class="v2-muted" style="margin:6px 0 0">${esc(L.note)}</p>` : ''}
       ${lmRankLine(L)}
       ${L.layer === 'user' && L.id !== 'work' ? `<div class="v2-actions">${v2ButtonId('edit-saved', L.id, 'Edit')}${v2ButtonId('delete-saved', L.id, 'Delete', 'danger')}</div>` : ''}
-      <div class="v2-actions">${v2Button('choose-line', 'Change line')}${v2Button('follow', '▶ Follow the line')}${v2Button('tool-lab', 'Is it unusual? (test)')}</div></div>` +
+      <div class="v2-actions">${v2Button('choose-line', 'Change line')}${v2Button('fly', 'Fly it in 3D')}${v2Button('follow', '▶ Follow the line')}${v2Button('tool-lab', 'Is it unusual? (test)')}</div></div>` +
     `<h3 style="margin:16px 0 4px">Geological findings</h3>` +
     `<div class="v2-card"><div class="v2-row"><h3>Mineral deposits</h3><span class="v2-label">${nf(d.dep.total)} within ±${fmtKm(d.w)}</span></div>${
       d.dep.total

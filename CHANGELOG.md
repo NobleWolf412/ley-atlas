@@ -1,5 +1,16 @@
 # Ley Atlas changelog
 
+## 2.3 (15 Nov 2026): Fly the line in 3D
+
+- **Fly it in 3D:** new button on the line card and on the "what's along it" screen. It opens a full-screen 3D view, swoops down to point A and flies the line over satellite imagery and real terrain.
+  - The line glows on the ground. Sites along it stand as pins; mineral deposits are amber dots, fault crossings red, plate boundaries purple.
+  - A **Passing** card names what is beside you right now and how far to the left or right it is. The top shows distance travelled and the ground height under you.
+  - Controls: play/pause, a slider to jump anywhere along the line, and speed (1×, 2×, 4×, ½×). Esc or ✕ closes it. Drag to look around while paused.
+  - **It ends on the honest question.** The last card repeats what was found, says plainly that a long line through busy country always passes things, and offers **Is it unusual? Run the test**.
+- The 3D engine (MapLibre) is only downloaded the first time you fly, so the normal start-up is no slower.
+- Needs a connection for satellite and terrain tiles (Esri World Imagery; Mapzen terrain tiles on AWS). Without one, the flight still runs over a dark ground.
+- The research screens still use the existing 2D map and globe. Moving those onto the 3D engine is a later step.
+
 ## 2.2.1 (14 Nov 2026): internal tidy-up, nothing changes on screen
 
 - The map no longer depends on the features drawn on it: features now plug into the map and the panels through small extension points (events, draw layers, screens, actions). This is the groundwork for swapping in a 3D map engine.
