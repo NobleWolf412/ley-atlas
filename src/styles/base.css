@@ -184,3 +184,37 @@ button {
   font-size: 12px;
   white-space: nowrap;
 }
+
+/* "A new version is ready" (src/update.js) */
+#update-chip {
+  position: fixed;
+  left: 50%;
+  top: calc(64px + env(safe-area-inset-top, 0px));
+  transform: translateX(-50%);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 24px);
+  padding: 8px 8px 8px 14px;
+  border-radius: 999px;
+  background: #12161c;
+  color: #fff;
+  border: 1px solid rgba(255, 209, 102, 0.6);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+  font: 600 13px var(--f-body, system-ui, sans-serif);
+  white-space: nowrap;
+}
+#update-chip button {
+  all: unset;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #ffd166;
+  color: #1a1408;
+  font-weight: 700;
+}
+#update-chip button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

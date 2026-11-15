@@ -1,6 +1,6 @@
 # Ley Atlas changelog
 
-## 2.3.1 (15 Nov 2026): the line card makes sense
+## 2.3.2 (15 Nov 2026): the line card makes sense, updates announce themselves
 
 From Matt: "if I want to dismiss it, there's no way to. And I never actually saved it. I go to My lines and it shows zero."
 
@@ -9,6 +9,8 @@ From Matt: "if I want to dismiss it, there's no way to. And I never actually sav
 - **A line you have not saved is labelled "Not saved yet"** on the card.
 - **My lines shows the unsaved line too**, in its own "Not saved yet" box with Save line and Remove. The menu reads, for example, "0 saved · 1 not saved yet".
 - A line you put away stays away when you reopen the app.
+- **Updates announce themselves.** When a newer version has downloaded, a "A new version of Ley Atlas is ready · Update" bar appears; tap Update. Before this, a new version only showed after closing and reopening the tab. The app also checks for updates each time you come back to it.
+- **The version number** is at the bottom of the ☰ menu.
 
 ## 2.3 (15 Nov 2026): Fly the line in 3D
 

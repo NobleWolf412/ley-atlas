@@ -1,11 +1,14 @@
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // `base` must match the GitHub Pages path: https://noblewolf412.github.io/ley-atlas/
 const base = '/ley-atlas/';
+const { version } = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'));
 
 export default defineConfig({
   base,
+  define: { __APP_VERSION__: JSON.stringify(version) }, // shown at the bottom of the menu
   build: { target: 'es2022', chunkSizeWarningLimit: 1500 },
   test: { environment: 'node', include: ['tests/**/*.test.js'] },
   plugins: [

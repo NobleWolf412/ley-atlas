@@ -1,6 +1,9 @@
 // Entry point: load styles and start-up data, start the app, then fetch the heavy layers in the background.
 import './styles/index.css';
 import { loadDatasets, loadDeferredDatasets } from './data/datasets.js';
+import { watchForUpdates } from './update.js';
+
+watchForUpdates();
 
 const boot = document.getElementById('boot');
 const pct = (done, total) => `${Math.round((done / total) * 100)}%`;

@@ -20,7 +20,13 @@ export function v2Menu() {
     ) +
     row('menu-layers', '◧', 'Map layers', 'What shows on the map: site types, minerals, faults, lines') +
     row('tool-lab', '◈', 'Is it unusual?', 'Test a line or a set of sites against random ones') +
-    row('tool-data', '⇪', 'Add sites & data sources', 'Import your own list; where every dataset comes from')
+    row(
+      'tool-data',
+      '⇪',
+      'Add sites & data sources',
+      'Import your own list; where every dataset comes from',
+    ) +
+    `<p class="v2-muted" style="margin:14px 2px 0">Ley Atlas ${__APP_VERSION__}</p>`
   );
 }
 export function v2Saved() {
