@@ -168,7 +168,9 @@ export function v2Alert() {
     key =
       L.id +
       '|' +
-      (d ? d.kind + d.dep.total + d.fau.crossed + d.sites.length : '') +
+      (d
+        ? d.kind + d.dep.total + d.fau.crossed + d.sites.length + (d.mg.max ? Math.round(d.mg.max.v) : '')
+        : '') +
       '|' +
       (V2.lineColor || '');
   el.style.setProperty('--ac', (d && glowColor(d.kind)) || 'var(--line)');

@@ -39,6 +39,10 @@ const POOLS = () => [
   ...UG.map(([g, t]) => ['dep-' + g, 'Deposits: ' + t, depPool(g)]),
 ];
 const DEPPOOL = {};
+/** Forget the cached deposit pools (the deposits dataset changed). */
+export function resetDepPools() {
+  for (const k of Object.keys(DEPPOOL)) delete DEPPOOL[k];
+}
 function depPool(g) {
   if (DEPPOOL[g]) return DEPPOOL[g];
   const D = depData();

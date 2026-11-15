@@ -1,4 +1,5 @@
 // Line match: how promising is A to B versus nearby directions
+import { deferredLoaded, whenDeferredLoaded } from '../data/datasets.js';
 import { GEO } from '../core/geo.js';
 import { PIR, R, esc, nf } from '../core/util.js';
 import { buildLines } from '../domain/lines.js';
@@ -305,6 +306,11 @@ export function lmForAsync(aId, onDone, onProg) {
   // builds in ~30 ms slices so the screen keeps responding; calls back when ready
   const A = findPoint(aId);
   if (!A) return;
+  if (!deferredLoaded) {
+    // scores need deposits, faults and magnetic rock: start once they have arrived
+    whenDeferredLoaded(() => lmForAsync(aId, onDone, onProg));
+    return;
+  }
   if (lmReady(aId)) {
     onDone && onDone(LM);
     return;

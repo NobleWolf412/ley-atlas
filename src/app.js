@@ -27,6 +27,16 @@ import { initEvents } from './ui/events.js';
 import { initSwipeDelete } from './ui/swipe-delete.js';
 import { initEndpointDrag } from './map/endpoint-drag.js';
 import { initBoot } from './boot.js';
+import { resetUndergroundData } from './layers/underground.js';
+import { resetLayerCounts } from './panels/layers-pane.js';
+import { resetLineUnderground } from './panels/lines-pane.js';
+import { resetDepPools } from './features/random-test.js';
+import { v2LineChanged } from './features/discovery.js';
+import { req, setBC } from './map/draw.js';
+import { V2 } from './state/preferences.js';
+import { v2Render } from './ui/panels.js';
+import { changed } from './ui/sheet.js';
+import { openSharedLink } from './features/share-link.js';
 
 export function startApp() {
   initUtil();
@@ -57,4 +67,27 @@ export function startApp() {
   initSwipeDelete();
   initEndpointDrag();
   initBoot();
+  // after the first layout pass, so the camera can frame a shared line
+  requestAnimationFrame(openSharedLink);
+}
+
+/**
+ * Called once the deferred datasets (coastline detail, deposits, faults, plates,
+ * magnetic grids) have arrived: forget anything computed without them and redraw.
+ */
+export function deferredDataReady() {
+  // the magnetic grids decode a moment later: refresh what the active line shows when each lands
+  resetUndergroundData(() => {
+    v2LineChanged();
+    v2Render();
+  });
+  resetLayerCounts();
+  resetLineUnderground();
+  resetDepPools();
+  V2.magCache = null;
+  setBC(null);
+  v2LineChanged();
+  changed();
+  // draw once more after the base-map cache has been rebuilt (60 ms after a full draw)
+  setTimeout(req, 150);
 }

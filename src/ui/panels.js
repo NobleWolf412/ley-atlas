@@ -1,4 +1,5 @@
 // Panels: explore, draw, analyze, menu, saved
+import { shareCurrent } from '../features/share-link.js';
 import { GEO } from '../core/geo.js';
 import { $, esc, nf } from '../core/util.js';
 import { ROMAN } from '../data/datasets.js';
@@ -126,7 +127,7 @@ function v2Draw() {
       `<div class="v2-card tinted"><h3 style="margin:0 0 4px">${esc(w.name || 'Your line')}</h3>
       <p class="v2-muted" style="margin:0">${global ? 'All the way round the globe' : fmtKm(GEO.dist(...ends[0], ...ends[1]))} · heading ${(w.brg || 0).toFixed(0)}°</p>
       <p class="v2-sum"><span class="v2-glowkey" style="background:${(d && glowColor(d.kind)) || 'var(--line)'}"></span>${esc(v2Summary(d))}</p>
-      <div class="v2-actions">${v2Button('analyze', 'See what’s along it', 'primary')}${v2Button('follow', '▶ Follow it')}</div></div>` +
+      <div class="v2-actions">${v2Button('analyze', 'See what’s along it', 'primary')}${v2Button('follow', '▶ Follow it')}${v2Button('share', 'Share')}</div></div>` +
       `<div class="v2-card"><label class="v2-field" style="margin-top:0">Name<input id="v2name" type="text" maxlength="100" value="${esc(w.name || 'Untitled line')}"></label>
       <div class="v2-actions">${v2Button('save-work', V2.editId ? 'Save changes' : 'Save line', 'primary')}${v2Button('new-line', '＋ New line')}${v2Button('discard', 'Remove', 'danger')}</div>
       <details class="v2-more"><summary>More options</summary><label class="v2-feature"><span class="v2-description"><strong>Extend around the globe</strong><small>Draw the full circle, not just between the two points</small></span><input type="checkbox" id="v2global" ${global ? 'checked' : ''}></label><p class="v2-muted v2-mono" style="margin:6px 0 0">A ${fmtLL(ends[0][0], ends[0][1], 4)}<br>B ${fmtLL(ends[1][0], ends[1][1], 4)}</p></details></div>`
@@ -765,6 +766,9 @@ export function v2HandleAction(action, id) {
       break;
     case 'choose-line':
       openLinePicker();
+      break;
+    case 'share':
+      shareCurrent();
       break;
     case 'follow':
       if (!activeLine()) break;

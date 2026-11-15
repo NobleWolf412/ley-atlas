@@ -17,6 +17,10 @@ export function tag(cls) {
   return `<span class="tag ${cls}">${esc(CLASSES[cls] || cls)}</span>`;
 }
 let UGL = null;
+/** Forget the cached deposits-along-the-line result (the deposits dataset changed). */
+export function resetLineUnderground() {
+  UGL = null;
+}
 export function ugAlongLine(L, w) {
   const key = L.id + '|' + w + '|' + L.segs.map(g => g.brg.toFixed(6) + g.o.join() + '/' + g.len).join();
   if (UGL && UGL.key === key) return UGL;

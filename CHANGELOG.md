@@ -1,5 +1,13 @@
 # Ley Atlas changelog
 
+## 2.2 (14 Nov 2026): opens fast, installs like an app, lines can be shared
+
+- **Opens fast:** the map and all sites appear after about 1 MB of download instead of 5.8 MB. The heavy layers (detailed coastline, mineral deposits, faults, plates, magnetic maps) arrive in the background; a small "Loading underground data…" note shows until they are in. Line match waits for them, and the active line's findings refresh by themselves when they land.
+- **Installs like an app:** in Chrome on Android use ⋮ → "Add to Home screen" (or "Install app"). It then opens full screen from its own icon and **works offline** after the first visit. New versions are picked up automatically the next time it opens.
+- **Share a line:** the line card has a **Share** button. On a phone it opens the share sheet; on a computer it copies a link. The link opens the atlas on that exact line (site to site, freehand, or a case study) with the same search corridor. With no line chosen, the link carries the current map view.
+- **Fixed:** the small line card on the map could miss "strong magnetic signal" if the line was shown before the magnetic map had finished loading. It now updates.
+- Not included yet: satellite tiles are not kept for offline use.
+
 ## 2.1.1 (14 Nov 2026): rebuilt as a proper project, now on GitHub Pages
 
 Nothing changes in how the app looks or works. It is now a real code project instead of one 11 MB file.

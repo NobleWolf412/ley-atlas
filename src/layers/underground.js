@@ -769,20 +769,40 @@ export function initUnderground() {
     for (let i = 0; i < w * h; i++) a[i] = d[i * 4] > 127 ? 1 : 0;
     LAND = { a, w, h };
   });
+}
+
+/** Decodes the magnetic grids. Called when the deferred datasets arrive. */
+function loadMagneticGrids(onGrid) {
   decodePng(UKMAG.png, (d, w, h) => {
     const a = new Uint8Array(w * h);
     for (let i = 0; i < w * h; i++) a[i] = d[i * 4];
     MAG = { a, w, h, img: {}, G: UKMAG };
     V2.disc = null;
+    V2.magCache = null;
     req();
+    onGrid?.();
   });
   decodePng(WMAG.png, (d, w, h) => {
     const a = new Uint8Array(w * h);
     for (let i = 0; i < w * h; i++) a[i] = d[i * 4];
     WMAGD = { a, w, h, img: {}, G: WMAG };
     V2.disc = null;
+    V2.magCache = null;
     req();
+    onGrid?.();
   });
+}
+
+/**
+ * Drops everything derived from the deferred datasets and decodes the magnetic grids.
+ * @param {() => void} [onGrid] called each time a magnetic grid has finished decoding
+ */
+export function resetUndergroundData(onGrid) {
+  DEP = null;
+  DEPV = null;
+  FLT = null;
+  PLT = null;
+  loadMagneticGrids(onGrid);
 }
 
 // Setters for variables that other modules change.

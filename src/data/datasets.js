@@ -1,8 +1,12 @@
-// Loads the static datasets in public/data/ before the app starts.
+// Loads the static datasets in public/data/.
 //
-// Each dataset is exported as a live binding. They are all filled in by
-// loadDatasets(), which main.js awaits before importing the app, so every
-// module can read them synchronously, just as the single-file build did.
+// Each dataset is exported as a live binding, in two groups:
+//  * Start-up data (sites, world outline): loadDatasets() fetches these and
+//    main.js awaits them before starting the app.
+//  * Deferred data (detailed coastline, deposits, faults, plates, magnetic
+//    grids; about 85% of the bytes): these start as empty placeholders, so
+//    the map can open at once. loadDeferredDatasets() fills them in the
+//    background; app.js then clears caches and redraws (deferredDataReady).
 //
 // To add a dataset: put the JSON file in public/data/, add an entry to FILES,
 // and add a matching `export let` below.
@@ -25,6 +29,38 @@ export let TOPO_LAND110,
   ROMAN,
   WMAG,
   NEAR;
+
+// Empty stand-ins with the same shape as the real data.
+BASEMAP = { land10: [], land50: [], bord10: [], bord50: [], rivers: [], lakes: [], places: [] };
+DEPOSITS = {
+  n: 0,
+  pts: '',
+  p: '',
+  m: '',
+  st: '',
+  src: '',
+  srcs: [],
+  ty: '',
+  types: [],
+  names: '',
+  cc: '',
+  ccl: [],
+};
+FAULTS = { f: [], st: [], cat: [] };
+PLATES = [];
+UKMAG = null;
+WMAG = null;
+
+const DEFERRED = ['BASEMAP', 'DEPOSITS', 'FAULTS', 'PLATES', 'UKMAG', 'WMAG'];
+
+/** True once the deferred datasets have arrived. */
+export let deferredLoaded = false;
+const waiting = [];
+/** Runs `fn` once the deferred datasets are in (at once if they already are). */
+export function whenDeferredLoaded(fn) {
+  if (deferredLoaded) fn();
+  else waiting.push(fn);
+}
 
 const FILES = {
   TOPO_LAND110: 'basemap-land-110m', // Natural Earth land, 1:110m (TopoJSON)
@@ -108,13 +144,8 @@ function assign(name, value) {
   }
 }
 
-/**
- * Fetches every dataset in parallel.
- * @param {(done: number, total: number) => void} [onProgress]
- */
-export async function loadDatasets(onProgress) {
+async function fetchAll(names, onProgress) {
   const base = `${import.meta.env.BASE_URL}data/`;
-  const names = Object.keys(FILES);
   let done = 0;
   await Promise.all(
     names.map(async name => {
@@ -124,4 +155,25 @@ export async function loadDatasets(onProgress) {
       onProgress?.(++done, names.length);
     }),
   );
+}
+
+/**
+ * Fetches the start-up datasets in parallel.
+ * @param {(done: number, total: number) => void} [onProgress]
+ */
+export function loadDatasets(onProgress) {
+  return fetchAll(
+    Object.keys(FILES).filter(n => !DEFERRED.includes(n)),
+    onProgress,
+  );
+}
+
+/**
+ * Fetches the deferred datasets, then runs everything queued with whenDeferredLoaded().
+ * @param {(done: number, total: number) => void} [onProgress]
+ */
+export async function loadDeferredDatasets(onProgress) {
+  await fetchAll(DEFERRED, onProgress);
+  deferredLoaded = true;
+  for (const fn of waiting.splice(0)) fn();
 }

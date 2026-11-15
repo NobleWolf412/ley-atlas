@@ -53,12 +53,21 @@ sequenceDiagram
   participant D as data/datasets.js
   participant A as app.js
   B->>M: load index.html
-  M->>D: loadDatasets() fetches 18 JSON files in parallel
-  D-->>M: all datasets ready ("Loading… %")
+  M->>D: loadDatasets() fetches the 12 start-up files (sites, world outline)
+  D-->>M: ready ("Loading… %")
   M->>A: import app.js, then startApp()
   A->>A: initUtil() → initPalette() → … → initBoot()
-  Note over A: same order as the original single-file app
+  Note over A: map is usable here (about 1 MB downloaded)
+  M->>D: loadDeferredDatasets() fetches the 6 heavy files in the background
+  D-->>M: ready
+  M->>A: deferredDataReady() clears caches, redraws, refreshes the active line
 ```
+
+**Two-phase data.** The deferred datasets (detailed coastline, deposits, faults, plates, both magnetic grids) start as empty placeholders of the right shape, so code that reads them never crashes; it just finds nothing until they arrive. Anything that caches a result derived from them must be reset in `deferredDataReady()` in `src/app.js`. Work that must not run on empty data (line match) waits with `whenDeferredLoaded()`.
+
+**Offline / install.** `vite-plugin-pwa` generates a service worker that precaches the app and all datasets, plus a web manifest (`vite.config.js`). Icons are in `public/icons/`.
+
+**Share links.** `core/share.js` encodes and decodes the address (`?a=…&b=…`, `?p=…`, `?l=…`, `?c=…`); `features/share-link.js` builds one from the current state and applies one at start-up.
 
 - Modules do **no work when imported**: at module level there are only functions and constant literals. Anything that needs data, the DOM or another module runs inside the module's `initX()` function.
 - `app.js` calls every `initX()` in a fixed order. That order matters (for example, points must exist before lines are built), so keep new init calls in a sensible place in that list.
@@ -102,7 +111,7 @@ Modules export the variables other modules read (`export let W, H`). ES modules 
 2. **Feature registry.** With the bus in place, each feature exports `{ id, init, draw?, panel? }` and `app.js` lists features in one array: removing a feature becomes deleting one line.
 3. **Big files.** `ui/panels.js` (≈900 lines) and `map/draw.js` (≈830) should be split by screen and by layer.
 4. **Legacy panes.** Some 2.x screens (Layers, Is it unusual?, Data) still render into the 1.x panes (`#p-layers`, `#p-lab`, `#p-data`). Port them to the 2.x panel renderer.
-5. **Lazy datasets.** The magnetic grid, deposits and detailed basemap (≈4.3 MB gzipped) load up front. Load them when their layer is first switched on.
+5. **Placeholders → events.** Deferred data is handled by explicit cache resets in `deferredDataReady()`. Once the event bus exists, make it a `dataLoaded` event that each module handles itself.
 
 ## How this structure was made
 

@@ -22,6 +22,10 @@ import { applyTheme } from '../ui/theme.js';
 
 let OPEN = { lines: true, types: true, under: true, sources: false, analysis: false, base: false };
 let UGCOUNT = null;
+/** Forget the per-mineral record counts (the deposits dataset changed). */
+export function resetLayerCounts() {
+  UGCOUNT = null;
+}
 export function renderLayers() {
   const row = (key, title, sub, cls, on, swk, disabled, attr = 'data-layer') =>
     `<div class="lg ${on ? '' : 'off'}">${sw(swk || key)}<div class="t"><b>${esc(title)}</b>${sub ? `<span>${sub}</span>` : ''}${cls ? tag(cls) : ''}</div><button class="tog" role="switch" aria-checked="${on}" aria-label="${esc(title)}" ${attr}="${key}" ${disabled ? 'disabled' : ''}></button></div>`;
