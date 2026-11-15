@@ -1,0 +1,139 @@
+/* Modal and picker */
+/* ---------- modal & picker ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: var(--scrim);
+  display: grid;
+  place-items: center;
+  padding: 20px max(14px, env(safe-area-inset-right, 0px)) 20px max(14px, env(safe-area-inset-left, 0px));
+  z-index: 50;
+}
+.modal {
+  grid-template-columns: minmax(0, 1fr);
+}
+.modal .box {
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  width: min(640px, 100%);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--shadow);
+}
+.modal .head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.modal .head b {
+  flex: 1;
+  font-family: var(--f-display);
+  font-size: 18px;
+}
+#modalbody,
+#pickbody {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+  flex: 1;
+}
+.modal textarea {
+  min-height: 120px;
+}
+.modal img {
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+#picker .box {
+  height: min(720px, 88vh);
+}
+#pickchips {
+  flex: none;
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .modal {
+    place-items: end stretch;
+    padding: 0;
+  }
+  .modal .box {
+    border-radius: 16px 16px 0 0;
+    max-height: 92vh;
+    width: 100%;
+    padding-bottom: max(14px, env(safe-area-inset-bottom, 0px));
+  }
+  #picker .box {
+    height: 92vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #sheet {
+    transition: none;
+  }
+  #toast.show {
+    animation: none;
+  }
+}
+.ugsw {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border-radius: 2px;
+  margin-right: 8px;
+  vertical-align: 1px;
+  flex: none;
+}
+.ugsw.lg {
+  width: 14px;
+  height: 14px;
+}
+.ugchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ugchip {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--raise);
+  color: var(--text);
+}
+.ugchip b {
+  margin-left: 6px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.ugchip[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.ugchip:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.magkey {
+  display: inline-block;
+  width: 34px;
+  height: 8px;
+  border-radius: 3px;
+  margin-right: 6px;
+  background: linear-gradient(90deg, #3d6fd8, #eee, #d8433d);
+  vertical-align: middle;
+}

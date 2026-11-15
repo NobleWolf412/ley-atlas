@@ -1,7 +1,20 @@
 # Ley Atlas changelog
 
+## 2.1.1 (14 Nov 2026): rebuilt as a proper project, now on GitHub Pages
+
+Nothing changes in how the app looks or works. It is now a real code project instead of one 11 MB file.
+
+- **New permanent link:** https://noblewolf412.github.io/ley-atlas/. Every change pushed to GitHub is tested and published there automatically.
+- **Data split from code:** the 18 datasets are separate files in `public/data/`, so a code change no longer re-downloads 11 MB, and the browser caches data and code separately.
+- **Code split into 46 modules** by job (geodesy, sites, lines, map drawing, underground layers, line match, panels…), with explicit imports. See ARCHITECTURE.md.
+- **Dead code removed:** 28 leftover functions and settings from the 1.x/2.0 screens that nothing used.
+- **Safety nets:** unit tests (geodesy, Google Maps links, fair p, coordinate and CSV/GeoJSON parsing, dataset checks), a linter that catches missing or unused code, and automatic formatting. All run on every push.
+- **Checked against 2.1:** the same map pixel for pixel on phone and desktop, and the same results for drawing Stonehenge → Bourtange, line match, the menus, layers and both statistical tests.
+
 ## 2.1 update (12 Nov 2026, night): line match — help choosing B
+
 Request: "when it has me choose B, the list could have indicators of good potential, taking into account underground and other things — otherwise it's a shot in the dark."
+
 - **What it scores:** once A is picked, every switched-on site (12,621) is scored as a possible B, using what lies within the corridor of A→B:
   - mineral deposits
   - fault and plate-boundary crossings
@@ -22,30 +35,37 @@ Request: "when it has me choose B, the list could have indicators of good potent
 - **Checked against the line check:** deposit and crossing counts match the discovery check for the same lines (e.g. Stonehenge → Bourtange: 1 deposit, 0 crossings in both). The site count differs on purpose because of cluster weighting.
 
 ## 2.1 update (12 Nov 2026, evening): Google Maps link goes to the exact spot
+
 - Every map link uses Google's cross-platform search link (`maps/search/?api=1&query=lat,lon`), with a pin on the exact coordinates in the phone app and on the web. Satellite is one tap away there.
 - Relabelled **Google Maps ↗**; it is on the site card, the full record and the mineral record.
 - Test: link coordinates equal the site's coordinates exactly for every site type.
 
 ## 2.1 update (12 Nov 2026, later): site card fixes from the phone
+
 - Same-named sites get their town added, e.g. the 7 forts called "Schans" become "Schans (Gennep)", "Schans (SE of Maasbree)" and so on.
 - A tapped site that ends up hidden slides into view.
 - Shorter distances.
 
 ## 2.1 update (12 Nov 2026): telling same-named sites apart
+
 - The atlas's "De Schans" is the Ouddorp fort. Added Fort De Schans (Texel) at 53.0313, 4.8281 (Wikidata Q12012847 and burgenwelt.org agree within 35 m).
 - Nearest-town labels from GeoNames.
 - 603 forts mislabelled after distant cities are relabelled.
 
 ## 2.1 update (11 Nov 2026, night): swipe to delete, world magnetic map, real file saving
+
 - Swipe to delete with Undo.
 - World magnetic map, land and sea (NOAA EMM2017; Britain 2 km survey on top).
 - Real downloads inside claude.ai.
 
 ## 2.1 update (11 Nov 2026, late evening): map first, no tabs
+
 Prompted by Summer: "cool with the map… the tabs are overwhelming."
+
 - The map opens on its own with ☰ Menu, "Search sites" and "＋ Draw a line". Panels open only when asked for.
 
 ## Earlier 2.1 updates (11 Nov 2026)
+
 - No default line.
 - No Tools tab.
 - One way into each control.
@@ -56,6 +76,7 @@ Prompted by Summer: "cool with the map… the tabs are overwhelming."
 - Two-site lines with a discovery check.
 
 ## Known limitations
+
 - **Mineral deposits are land only** (mines and prospects). Seafloor metal is not included; the InterRidge vents database is not reachable from the build environment.
 - Mineral records are thin outside North America. An empty result is not proof of empty ground, and the line match will lean on faults, magnetic rock and sites there.
 - Line match: the magnetic part uses a 1° polar grid around A. The score compares directions from A only; it does not test whether alignments in general are real.

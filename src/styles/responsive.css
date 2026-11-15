@@ -1,0 +1,251 @@
+/* Landscape side panel, map-first layout */
+/* landscape phones: side panel instead of a bottom sheet */
+@media (orientation: landscape) and (max-height: 520px) and (min-width: 600px) {
+  #app {
+    flex-direction: row !important;
+  }
+  #sheet,
+  #sheet.peek,
+  #sheet.full,
+  #sheet:not(.peek):not(.full) {
+    height: 100% !important;
+    --sheet-h: 100% !important;
+    width: min(46vw, 380px) !important;
+    min-width: 0 !important;
+    border-top: 0 !important;
+    border-left: 1px solid var(--line) !important;
+  }
+  #sheet .grab {
+    display: none !important;
+  }
+  #sheet.peek #v2panel > *:not(.v2-peek) {
+    display: revert;
+  }
+  #sheet.peek #v2panel > .v2-peek {
+    display: none !important;
+  }
+  #v2bar {
+    top: 96px;
+  }
+  #v2alert {
+    bottom: 10px;
+  }
+}
+@media (min-width: 1101px) and (min-height: 651px) {
+  #app:not(.v2-advanced) .searchpill {
+    display: none;
+  }
+  #v2bar {
+    top: 83px;
+  }
+  #v2done {
+    top: 135px;
+  }
+}
+@media (orientation: landscape) and (max-height: 520px) and (min-width: 600px) {
+  #app:not(.v2-advanced) .searchpill {
+    display: none;
+  }
+  #v2bar {
+    top: 53px;
+  }
+  #v2done {
+    top: 100px;
+  }
+}
+/* 2.1 tab restructure: no map search (Explore has it), Layers sits where the search was */
+#v2tools {
+  align-items: center;
+  gap: 10px;
+}
+.v2-hostback {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--raise);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 13px;
+  font: 700 12px var(--f-body);
+  cursor: pointer;
+  min-height: 36px;
+  flex: none;
+}
+#v2tools b {
+  font-size: 14px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#v2bar {
+  top: 83px;
+}
+#v2done {
+  top: 135px;
+}
+#v2layers {
+  top: 128px;
+  width: min(360px, calc(100% - 86px));
+  max-height: min(78vh, 640px);
+}
+#app.v2-tools #p-detail > .back {
+  display: none;
+}
+#app.sheetfull #v2bar,
+#app.sheetfull #v2done {
+  display: none;
+}
+.v2-bear {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 8px 0 0;
+}
+.v2-bear input,
+.v2-bear select {
+  width: 100%;
+}
+details.v2-more > summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  list-style: none;
+}
+details.v2-more > summary::before {
+  content: '▸ ';
+  color: var(--accent);
+}
+details.v2-more[open] > summary::before {
+  content: '▾ ';
+}
+#p-layers {
+  padding: 4px 0 0;
+}
+#p-layers .notebar {
+  margin-top: 10px;
+}
+@media (max-width: 640px) {
+  #v2layers {
+    right: 12px;
+    width: calc(100% - 24px);
+  }
+}
+@media (max-height: 520px) {
+  #v2bar {
+    top: 53px;
+  }
+  #v2done {
+    top: 100px;
+  }
+  #v2layers {
+    top: 95px;
+    max-height: calc(100vh - 110px);
+  }
+}
+/* map first: no tabs; the panel opens only when something asks for it */
+#app.v2-home #sheet {
+  display: none !important;
+}
+#v2tools {
+  display: flex;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line2);
+  background: var(--panel);
+}
+#v2tools[hidden] {
+  display: none !important;
+}
+.v2-searchbtn {
+  min-width: min(230px, calc(100vw - 150px));
+  justify-content: flex-start !important;
+  color: var(--muted) !important;
+  font-weight: 600 !important;
+}
+#v2-menu {
+  font-size: 16px;
+  padding-left: 13px;
+  padding-right: 13px;
+}
+#v2cta {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 30px;
+  z-index: 6;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: 750 15px var(--f-body);
+  padding: 14px 24px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+#v2cta[hidden] {
+  display: none !important;
+}
+#v2cta:focus-visible {
+  outline: 3px solid var(--text);
+  outline-offset: 3px;
+}
+#v2alert .x {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.v2-menurow {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--line2);
+  background: transparent;
+  color: var(--text);
+  padding: 14px 4px;
+  cursor: pointer;
+  font: inherit;
+}
+.v2-menurow .ic {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--raise);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  color: var(--accent);
+  flex: none;
+}
+.v2-menurow .nm {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.v2-menurow strong {
+  font-size: 15px;
+}
+.v2-menurow small {
+  font-size: 12px;
+  color: var(--muted);
+}
+.v2-sum {
+  margin: 10px 0 2px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+@media (max-width: 1100px), (max-height: 650px) {
+  #v2alert {
+    bottom: 22px;
+  }
+}
+@media (max-width: 700px) {
+  #app.v2-home .hud {
+    bottom: 96px;
+  }
+}
