@@ -1,4 +1,5 @@
 // Share links: send someone the line you are looking at, and open a line someone sent you
+import { registerAction } from '../ui/registry.js';
 import { decodeShare, encodeShare } from '../core/share.js';
 import { LINEBY, activeLine } from '../domain/lines.js';
 import { findPoint } from '../domain/points.js';
@@ -64,4 +65,8 @@ export function openSharedLink() {
     if (!d.sites.every(findPoint)) return toast('That shared line uses a site this atlas does not have');
     v2ConnectSites(d.sites[0], d.sites[1], !!d.global);
   } else if (d.ends && v2ApplyEnds(d.ends, d.name, !!d.global)) flyToLine(activeLine());
+}
+
+export function initShareLink() {
+  registerAction('share', shareCurrent);
 }

@@ -13,7 +13,8 @@ import { ugAlongLine } from '../panels/lines-pane.js';
 import { C, STY } from '../render/palette.js';
 import { V2 } from '../state/preferences.js';
 import { S } from '../state/state.js';
-import { v2ChangeTab, v2HandleAction } from '../ui/panels.js';
+import { v2ChangeTab } from '../ui/panels.js';
+import { v2HandleAction } from '../ui/actions.js';
 
 // ---------- discovery: what lies along the active line (cached per line + corridor) ----------
 function v2CrossCheck(L, w, rows) {

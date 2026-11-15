@@ -38,7 +38,7 @@ import { req, setBC } from './map/draw.js';
 import { V2 } from './state/preferences.js';
 import { v2Render } from './ui/panels.js';
 import { changed } from './ui/sheet.js';
-import { openSharedLink } from './features/share-link.js';
+import { initShareLink, openSharedLink } from './features/share-link.js';
 import { initMapTaps } from './ui/map-taps.js';
 
 export function startApp() {
@@ -68,6 +68,7 @@ export function startApp() {
   initDiscovery(); // registers its draw layers before line match, so glows sit under the match fan
   initLineMatch();
   initLineOverlay();
+  initShareLink();
   initPanels();
   initEvents();
   initSwipeDelete();

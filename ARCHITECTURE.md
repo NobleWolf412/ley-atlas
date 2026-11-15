@@ -6,43 +6,69 @@ Ley Atlas is a static web app: plain JavaScript (ES modules), HTML canvas for th
 
 ```mermaid
 flowchart TB
-  subgraph APP["App layer: screens and interaction"]
+  subgraph APP["App layer: screens and features"]
     direction LR
-    ui["ui/ · panels, events, picker, theme"]
+    ui["ui/ · router, screens, actions"]
     panels["panels/ · full-page records and tools"]
-    features["features/ · line match, discovery, tests, import"]
-    map["map/ · canvas, drawing, gestures, camera"]
-    layers["layers/ · underground data on the map"]
+    features["features/ · line match, discovery, share, tests, import"]
+  end
+  subgraph MAP["Map engine"]
+    direction LR
+    map["map/ · canvas, drawing, gestures, camera, hooks"]
+    layers["layers/ · underground drawing"]
   end
   render["render/ · palettes, icons"]
-  domain["domain/ · sites, lines, analysis, categories"]
+  domain["domain/ · sites, lines, analysis, underground lookups"]
   state["state/ · app state + saved preferences"]
-  core["core/ · geodesy, formatting, stats, DOM helpers"]
+  core["core/ · geodesy, formatting, stats, events"]
   data["data/ · dataset loader + curated catalog"]
   files[("public/data/*.json · 18 datasets")]
 
-  APP --> render & domain & state & core & data
-  render --> domain
-  domain --> state & core & data
+  APP --> MAP
+  APP -. "registers draw layers, listens to events" .-> MAP
+  MAP --> render --> domain --> state --> data --> core
   data --> files
 ```
 
-**The rule:** arrows only point down. `core`, `data`, `state`, `domain` and `render` never import from the app layer. Lint and review keep it that way. Inside the app layer, modules still call each other freely (see _Known debts_).
+**The rule:** arrows only point down. `core`, `data`, `state`, `domain`, `render`, `map` and `layers` never import from `features`, `ui` or `panels`. ESLint enforces this (`no-restricted-imports` in `eslint.config.js`), so a wrong import fails `npm run lint` and CI. When a lower layer needs to tell an upper one something, it uses an event or a hook (below).
 
 ## Folders
 
-| Folder      | What lives here                                                                                                             | Imports from                   |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
-| `core/`     | Pure helpers: great-circle maths (`geo.js`), number/coordinate formatting, statistics, tiny DOM helpers                     | nothing above it               |
-| `data/`     | `datasets.js` loads the 18 JSON files; `catalog.js` is the hand-curated project sites and alignments                        | `core`                         |
-| `state/`    | `S` (map, lines, layers, selection) and `V2` (2.x preferences), with localStorage persistence                               | `core`, `data`                 |
-| `domain/`   | Builds the site list from all datasets, the lines, which sites sit on which line, display categories                        | `core`, `data`, `state`        |
-| `render/`   | Colour palettes, line styles, SVG icons                                                                                     | `domain`, `state`              |
-| `map/`      | Canvas, projection, drawing loop, tiles, gestures, camera, overlays, zoomed-out modes                                       | anything below, plus app layer |
-| `layers/`   | Underground layers: deposits, faults, plates, magnetic grids                                                                | anything below, plus app layer |
-| `features/` | Line match, discovery along a line, creating lines, "Is it unusual?", underground test, CSV/GeoJSON import, follow-the-line | anything below, plus app layer |
-| `ui/`       | Panels (Explore / Draw / Analyze / Menu / Saved), event wiring, picker, sheet, theme, swipe-to-delete                       | anything below, plus app layer |
-| `panels/`   | Full-page tools opened from the menu: layers, record detail, data, lines, forts                                             | anything below, plus app layer |
+| Folder      | What lives here                                                                                                                                   | May import from      |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- |
+| `core/`     | Pure helpers: great-circle maths, formatting, statistics, share-link encoding, polyline decoding, the event bus, tiny DOM helpers                 | nothing              |
+| `data/`     | `datasets.js` loads the JSON files; `catalog.js` is the hand-curated project sites and alignments                                                 | `core`               |
+| `state/`    | `S` (map, lines, layers, selection) and `V2` (2.x preferences), with localStorage persistence                                                     | `core`, `data`       |
+| `domain/`   | Sites from all datasets, lines, which sites sit on which line, display categories, underground lookups (deposits, faults, plates, magnetic grids) | the above            |
+| `render/`   | Colour palettes, line styles, SVG icons                                                                                                           | the above            |
+| `map/`      | Canvas, projection, drawing loop, base layer, tiles, gestures, camera, zoomed-out modes, and the map's extension points (`hooks.js`)              | the above + `layers` |
+| `layers/`   | Draws the underground layers on the map                                                                                                           | the above + `map`    |
+| `features/` | Line match, discovery, creating and dragging lines, line overlay, share links, "Is it unusual?", underground test, import, follow-the-line        | anything             |
+| `ui/`       | Panel router, screens (`ui/screens/`), actions, registries, picker, sheet, theme, map taps, downloads                                             | anything             |
+| `panels/`   | Full-page tools: layers, site record, deposit and fault records, data, lines                                                                      | anything             |
+
+## How features plug in
+
+A feature never edits the drawing loop or the panel router. In its `initX()` it registers what it needs:
+
+| Extension point                    | Where            | Use it to                                               |
+| ---------------------------------- | ---------------- | ------------------------------------------------------- |
+| `on(event, fn)` / `emit(event, …)` | `core/events.js` | React to something a lower layer announces              |
+| `addDrawLayer(stage, fn)`          | `map/hooks.js`   | Draw on the map at `beforeLines`, `underLines` or `top` |
+| `addSiteHighlighter(fn)`           | `map/hooks.js`   | Name sites that must always be drawn in full and ringed |
+| `registerScreen(id, render)`       | `ui/registry.js` | Add a panel screen (shown when `V2.tab === id`)         |
+| `registerAction(name, fn)`         | `ui/registry.js` | Say what `<button data-v2="name">` does                 |
+
+Events in use:
+
+| Event               | Sent by              | Arguments              | Who listens                                 |
+| ------------------- | -------------------- | ---------------------- | ------------------------------------------- |
+| `map:tap`           | `map/interaction.js` | `x, y` (canvas pixels) | `ui/map-taps.js`                            |
+| `map:gesture-start` | `map/interaction.js` | none                   | intro (ends it), follow-the-line (stops it) |
+| `map:wheel`         | `map/interaction.js` | none                   | intro                                       |
+| `tiles:blocked`     | `map/tiles.js`       | none                   | `ui/sheet.js` (message, re-render)          |
+
+`features/share-link.js` is the model to copy: one file, one `initShareLink()` that registers its action, pure logic in `core/share.js` with tests.
 
 ## How it starts
 
@@ -89,8 +115,8 @@ Modules export the variables other modules read (`export let W, H`). ES modules 
 **Add a feature**
 
 1. Create `src/features/<name>.js`. Put pure maths in `src/core/` with tests.
-2. If it needs set-up, export `initName()` and call it from `src/app.js`.
-3. Add its button or panel in `src/ui/panels.js`, and handle the action in `v2HandleAction` (`ui/panels.js`) or `ui/events.js`.
+2. Export `initName()` and call it from `src/app.js`. In it, register what the feature needs: actions, a screen, draw layers, event handlers (see _How features plug in_).
+3. Put its button in the screen that should show it (`src/ui/screens/`), as `v2Button('your-action', 'Label')`.
 4. Add styles as a new file in `src/styles/` and `@import` it at the end of `src/styles/index.css`.
 
 **Remove a feature:** delete its module, then run `npm run lint`. Every place that still uses it shows up as an error (`no-undef`). Remove those, and lint again until it is clean.
@@ -107,11 +133,11 @@ Modules export the variables other modules read (`export let W, H`). ES modules 
 
 ## Known debts (next refactors, in order)
 
-1. **App-layer cycles.** `map`, `ui`, `features`, `panels` and `layers` import each other. Next step: a small event bus (`lineChanged`, `selectionChanged`, `layersChanged`) so features subscribe instead of being called directly by the drawing loop and panels.
-2. **Feature registry.** With the bus in place, each feature exports `{ id, init, draw?, panel? }` and `app.js` lists features in one array: removing a feature becomes deleting one line.
-3. **Big files.** `ui/panels.js` (≈900 lines) and `map/draw.js` (≈830) should be split by screen and by layer.
-4. **Legacy panes.** Some 2.x screens (Layers, Is it unusual?, Data) still render into the 1.x panes (`#p-layers`, `#p-lab`, `#p-data`). Port them to the 2.x panel renderer.
-5. **Placeholders → events.** Deferred data is handled by explicit cache resets in `deferredDataReady()`. Once the event bus exists, make it a `dataLoaded` event that each module handles itself.
+1. **App-layer cycles.** `features`, `ui` and `panels` still import each other (47 import cycles, down from 93). Most run through `changed()` in `ui/sheet.js` and `v2Render()`. Next: turn those into `state:changed` / `line:changed` events.
+2. **Action switch.** `ui/actions.js` is still one 250-line `switch`. Only Share uses `registerAction` so far. Move each feature's cases into its own module as that feature is next touched.
+3. **`map/draw.js`** is still 480 lines with one long `draw()` that draws lines and sites inline. It is due to be replaced by the map-engine change (MapLibre), so it has not been split further.
+4. **Legacy panes.** Some 2.x screens (Layers, Is it unusual?, Data) still render into the 1.x panes (`#p-layers`, `#p-lab`, `#p-data`). Port them to `registerScreen`.
+5. **Deferred data resets** are explicit calls in `deferredDataReady()` (`src/app.js`). Make it a `data:loaded` event that each module handles itself.
 
 ## How this structure was made
 

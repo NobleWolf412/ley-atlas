@@ -13,7 +13,8 @@ import { V2, v2Persist } from '../state/preferences.js';
 import { S } from '../state/state.js';
 import { toast } from './intro.js';
 import { renderKey, setFocus } from './map-chrome.js';
-import { v2ChangeTab, v2HandleAction, v2Highlight, v2Home, v2Render, v2SelectSite } from './panels.js';
+import { v2ChangeTab, v2Highlight, v2Home, v2Render, v2SelectSite } from './panels.js';
+import { v2HandleAction } from './actions.js';
 import { changed } from './sheet.js';
 import { setCATCOUNT, v2OpenBrowser } from './site-lists.js';
 

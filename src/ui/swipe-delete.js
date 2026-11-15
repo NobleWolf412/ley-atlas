@@ -1,5 +1,5 @@
 // Swipe left to delete
-import { v2HandleAction } from './panels.js';
+import { v2HandleAction } from './actions.js';
 
 export function initSwipeDelete() {
   // ---------- swipe left to delete ----------

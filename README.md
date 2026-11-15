@@ -59,7 +59,7 @@ tests/                unit tests
 
 ## Open items
 
-- [ ] Untangle the app layer: event bus + feature registry (see ARCHITECTURE.md → Known debts)
+- [ ] Finish untangling features, screens and panels (see ARCHITECTURE.md → Known debts)
 - [ ] Global gravity layer (EIGEN-6C4, land and sea): data is available but not built yet
 - [ ] Cathedral dataset (the Wikidata import works from a normal browser)
 - [ ] Seafloor metal deposits (InterRidge vents CSV)

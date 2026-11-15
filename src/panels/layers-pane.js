@@ -16,7 +16,7 @@ import { tag } from './lines-pane.js';
 import { S, persistImports } from '../state/state.js';
 import { toast } from '../ui/intro.js';
 import { renderKey, setFocus } from '../ui/map-chrome.js';
-import { v2SwipeRow } from '../ui/panels.js';
+import { v2SwipeRow } from '../ui/panel-parts.js';
 import { changed, keepScroll } from '../ui/sheet.js';
 import { applyTheme } from '../ui/theme.js';
 
