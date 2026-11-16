@@ -1,4 +1,5 @@
 // Creating lines: site to site or freehand
+import { toastAction } from '../ui/intro.js';
 import { registerAction } from '../ui/registry.js';
 import { GEO } from '../core/geo.js';
 import { $, PIR } from '../core/util.js';
@@ -52,6 +53,7 @@ export function v2ConnectSites(aId, bId, global, keepName) {
     /* switched their types back on */
   }
   const name = keepName && S.work ? S.work.name : `${A.n} → ${B.n}`;
+  offerToSave(S.work, name);
   S.work = {
     name,
     o: [A.lat, A.lon],
@@ -206,6 +208,30 @@ export function v2DrawBearing() {
   setSheet('half');
   v2LineChanged();
   v2Render();
+}
+/**
+ * A new site-to-site line has just replaced one that was never saved:
+ * offer to save the old one, without getting in the way.
+ */
+function offerToSave(old, newName) {
+  if (!old || V2.editId || old.name === newName) return;
+  // shown after the pickers have closed, so the button can be reached
+  setTimeout(
+    () =>
+      toastAction(
+        `“${old.name}” was not saved`,
+        'Save it',
+        () => {
+          const id = 'u' + Date.now(),
+            name = (old.name || 'Untitled alignment').slice(0, 100);
+          S.userLines.push({ ...stripF(old), id, name, short: name });
+          changed();
+          toast(`Saved “${name}” to My lines`);
+        },
+        8000,
+      ),
+    500,
+  );
 }
 export function v2SaveWork() {
   if (!S.work) return;

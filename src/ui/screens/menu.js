@@ -57,14 +57,18 @@ export function v2Saved() {
   );
 }
 export function v2LayersHtml() {
-  // quick display settings; every on/off switch is in the panel below it (renderLayers)
+  // header only; the groups are drawn by renderLayers (panels/layers-pane.js)
+  return `<div class="v2-row"><h3 style="margin:0">Map layers</h3><button class="v2-action ghost" data-v2="layers-close" aria-label="Close layers">✕</button></div><p class="v2-muted" style="margin:2px 0 8px">Choose what shows on the map. Open a group to change it.</p>`;
+}
+/** Fine-tuning that used to sit on top of the layers screen; now inside its Display options group. */
+export function v2DisplayOptionsHtml() {
   return (
-    `<div class="v2-row"><div><div class="v2-kicker">Layers</div><h3>When zoomed out, show</h3></div><button class="v2-action ghost" data-v2="layers-close" aria-label="Close layers">✕</button></div>` +
+    `<h3 class="sub">When zoomed out, show</h3>` +
     `<div class="v2-zm" role="radiogroup" aria-label="Zoomed-out display">${ZOOM_MODES.map(([k, t, d]) => `<button role="radio" aria-checked="${V2.zoomMode === k}" data-zm="${k}"><strong>${esc(t)}</strong><small>${esc(d)}</small></button>`).join('')}</div>` +
     `<p class="v2-muted" style="margin:6px 0 0">Up close, every switched-on site always shows. Sites on your line always show.</p>` +
-    `<div class="v2-divide"></div><h3>Underground display</h3>` +
+    `<h3 class="sub">How underground data is drawn</h3>` +
     `<div class="v2-ugstyle"><span>Deposits</span><div class="seg" role="group" aria-label="Deposit style"><button data-ugs-dep="points" aria-pressed="${V2.ugDep === 'points'}">Points</button><button data-ugs-dep="heat" aria-pressed="${V2.ugDep === 'heat'}">Density</button></div></div>` +
     `<div class="v2-ugstyle"><span>Faults</span><div class="seg" role="group" aria-label="Fault style"><button data-ugs-fault="lines" aria-pressed="${V2.ugFault === 'lines'}">Lines</button><button data-ugs-fault="heat" aria-pressed="${V2.ugFault === 'heat'}">Density</button></div></div>` +
-    `<label class="v2-field">Opacity · <span id="v2opacitylabel">${V2.overlayOpacity}%</span><input data-v2opacity type="range" min="15" max="100" step="5" value="${V2.overlayOpacity}"></label><div class="v2-actions">${v2Button('layers-clear', 'Switch all underground off')}</div><div class="v2-divide"></div>`
+    `<label class="v2-field">Opacity · <span id="v2opacitylabel">${V2.overlayOpacity}%</span><input data-v2opacity type="range" min="15" max="100" step="5" value="${V2.overlayOpacity}"></label>`
   );
 }

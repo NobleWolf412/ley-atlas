@@ -137,6 +137,10 @@ Modules export the variables other modules read (`export let W, H`). ES modules 
 | `npm run build`        | Production build into `dist/`                          |
 | `npm run check`        | All of the above; CI runs the same on every push       |
 
+## Site stories
+
+`features/site-story.js` fills the "About this place" block on a site card. It looks for an article in this order: the address the site list gives (`wikiUrl` / `wiki`), the list's Wikidata id, then a Wikipedia article within 2 km whose name matches (`core/wiki.js: pickNearby`, which returns nothing rather than a weak match). Results are kept per site while the app is open. The block updates itself in place when the reply arrives, so the panel is not redrawn.
+
 ## Known debts (next refactors, in order)
 
 1. **App-layer cycles.** `features`, `ui` and `panels` still import each other (47 import cycles, down from 93). Most run through `changed()` in `ui/sheet.js` and `v2Render()`. Next: turn those into `state:changed` / `line:changed` events.

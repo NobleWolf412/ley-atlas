@@ -1,5 +1,19 @@
 # Ley Atlas changelog
 
+## 2.7 (16 Nov 2026): a calmer app, and something to read about each site
+
+From Matt: "an easy way to search/filter, a clear and accurate layer system, draw lines, look for patterns, research and learn about these sites… nothing too chaotic and full of hundreds of buttons." That is now the written mission of the app.
+
+- **Map layers rebuilt.** It opened with 71 switches and settings at once. Now it opens with four rows: **Sites**, **Underground**, **Lines** and **Display options**. Each shows what is on ("10 of 11 types on", "all off") and opens when tapped; only one is open at a time.
+  - Sites has **All on / All off**. The lists the sites come from are tucked under "Where the sites come from".
+  - The case-study and published lines are tucked under "Example and published lines".
+  - Zoom display, deposit and fault style, opacity, labels, fort outlines and the background map moved into Display options.
+  - Nothing was removed; every switch is still there.
+- **The line screen leads with the answer.** At the top: how long the line is, what lies within the corridor (for example "13 sites · 1 mineral deposit · 0 fault crossings · 0 plate boundaries"), what stands out, and the **Is it unusual?** button. Everything else is a closed row you open if you want it: Sites along it, Mineral deposits, Faults and plate boundaries, Magnetic field, Strip view, Sun and moon, Corridor and line settings. On a phone that is 11 things to tap instead of 35. Rows you open stay open.
+- **New: About this place.** A site's card now shows a short introduction and a picture from Wikipedia, with a link to read more. It uses the article the site list names, or its Wikidata entry, or an article within 2 km whose name matches. If none clearly matches, it shows nothing rather than guess. Needs a connection.
+- **An unsaved line is no longer lost silently.** If you draw a new line over one you never saved, a message offers **Save it** for the old one.
+- Checked: 3D flight works on a phone (Matt).
+
 ## 2.6.1 (16 Nov 2026): Star fort lab removed
 
 From Matt: not useful, scrap it.

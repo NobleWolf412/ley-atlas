@@ -1,5 +1,11 @@
 # Ley Atlas: notes for Claude
 
+## Mission (agreed with Matt, 16 Nov 2026)
+
+**A calm research map of ancient, sacred and fortified sites.** Five jobs: (1) find sites easily, (2) clear and accurate layers, (3) draw lines and see what they cross, (4) spot patterns, (5) learn about each site.
+
+The rule over all of them is **calm**: few buttons, one way to do each thing, summary first with details collapsed. A feature that does not serve one of the five jobs waits. A new feature must not add buttons to a screen that is already busy; pair it with a cut where possible. Pages of statistics are not a feature (the Star fort lab was built and removed for this reason); a luck check is one plain verdict line.
+
 ## Design decisions (from Matt and Summer)
 
 - Map-first: the map opens on its own with ☰ Menu, "Search sites" and "＋ Draw a line". No tabs. Panels open only on demand. Summer found the tabbed UI overwhelming.

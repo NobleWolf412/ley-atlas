@@ -17,10 +17,11 @@ import { S, persistImports } from '../state/state.js';
 import { toast } from '../ui/intro.js';
 import { renderKey, setFocus } from '../ui/map-chrome.js';
 import { v2SwipeRow } from '../ui/panel-parts.js';
+import { v2DisplayOptionsHtml } from '../ui/screens/menu.js';
 import { changed, keepScroll } from '../ui/sheet.js';
 import { applyTheme } from '../ui/theme.js';
 
-let OPEN = { lines: true, types: true, under: true, sources: false, analysis: false, base: false };
+let OPEN = { types: false, under: false, lines: false, display: false, sources: false, examples: false };
 let UGCOUNT = null;
 /** Forget the per-mineral record counts (the deposits dataset changed). */
 export function resetLayerCounts() {
@@ -36,76 +37,39 @@ export function renderLayers() {
   const srcCount = s => BASE.filter(p => p.set === s).length;
   const grp = (id, title, cnt, body) =>
     `<details class="grp" data-g="${id}" ${OPEN[id] ? 'open' : ''}><summary>${esc(title)} ${cnt ? `<span class="cnt">${cnt}</span>` : ''}</summary><div class="body">${body}</div></details>`;
+  const typesOn = TYPES.filter(([k]) => S.layers.cat[k]).length;
+  const underOn = Object.keys(S.under).filter(k => S.under[k]).length;
+  const exampleKeys = [
+    'primary',
+    'bestfit',
+    'sword',
+    'swordfit',
+    'torsap',
+    'torsapfit',
+    'duff',
+    'meridian',
+    'viasacra',
+  ];
+  const examplesOn = exampleKeys.filter(k => S.layers[k]).length;
+  const myLines = (S.work ? 1 : 0) + S.userLines.length;
+  const sub = (id, title, cnt, body) =>
+    `<details class="grp sub" data-g="${id}" ${OPEN[id] ? 'open' : ''}><summary>${esc(title)} <span class="cnt">${cnt}</span></summary><div class="body">${body}</div></details>`;
   $('#p-layers').innerHTML = `
-  ${S.focus ? `<div class="notebar"><span style="flex:1">Showing <b>one line</b>: ${L ? esc(L.short || L.name) : 'none chosen yet'}. Line switches below take effect when you show all lines.</span><button class="btn" id="lg-all">Show all</button></div>` : `<div class="notebar"><span style="flex:1">Showing <b>all enabled lines</b>.</span><button class="btn" id="lg-one">Only the active line</button></div>`}
   ${grp(
     'types',
-    'Site types',
-    '',
-    `<p class="small" style="margin:0 0 4px">One switch per type, whatever list the site came from (yours, the wonders, the fort catalogue, imports).</p>` +
+    'Sites',
+    `${typesOn} of ${TYPES.length} types on`,
+    `<p class="small" style="margin:0 0 4px">One switch per kind of site.</p>
+    <div class="lyr-bulk"><button class="btn" data-allcat="1">All on</button><button class="btn" data-allcat="0">All off</button></div>` +
       TYPES.map(([k, t]) => {
         const n = typeCount(k);
         return `<div class="lg ${S.layers.cat[k] ? '' : 'off'}">${sw(k)}<div class="t"><b>${esc(t)}</b><span>${nf(n)} site${n === 1 ? '' : 's'}</span></div><button class="tog" role="switch" aria-checked="${S.layers.cat[k]}" aria-label="${esc(t)}" data-cat="${k}"></button></div>`;
       }).join('') +
-      row(
-        'stonework',
-        'Mark precision stonework',
-        `Diamond ring on the ${MEGALITHS.length} sites scored for masonry (Göbekli Tepe, Baalbek, Puma Punku…)`,
-        '',
-        S.layers.stonework,
-        'stonework',
-      ),
-  )}
-  ${grp(
-    'under',
-    'Underground',
-    '',
-    (() => {
-      if (!UGCOUNT) {
-        const D = depData();
-        UGCOUNT = {};
-        for (const [g] of UG) {
-          let n = 0;
-          for (let k = 0; k < D.n; k++) if (!D.approx[k] && D.m[k] & UGBIT[g]) n++;
-          UGCOUNT[g] = n;
-        }
-      }
-      const ug = (k, t, sub, swk) =>
-        `<div class="lg ${S.under[k] ? '' : 'off'}">${sw(swk)}<div class="t"><b>${esc(t)}</b><span>${sub}</span></div><button class="tog" role="switch" aria-checked="${S.under[k]}" aria-label="${esc(t)}" data-ug="${k}"></button></div>`;
-      return `<p class="small" style="margin:0 0 4px">Recorded mineral deposits and mines, plus faults and magnetic data. Tap a site to see what lies nearest to it. Records are densest in the USA and Canada and thin in much of Europe, so a blank area may just mean no records.</p>
-    <h3 class="sub">Mineral deposits</h3>${UG.map(([k, t, sub]) => ug(k, t, `${nf(UGCOUNT[k])} records · ${esc(sub)}`, 'ug-' + k)).join('')}
-    <h3 class="sub">Earth structure</h3>
-    ${ug('faults', 'Active faults', 'GEM Global Active Faults: faults that can still slip and cause earthquakes', 'faults')}
-    ${ug('plates', 'Tectonic plate boundaries', 'Bird (2003) PB2002 model', 'plates')}
-    ${ug('mag', 'Magnetic field (world, land and sea)', 'Red = stronger than average (magnetic rock), blue = weaker. World model at about 25 km detail; Britain shows its 2 km survey. Flat map only.', 'mag')}`;
-    })(),
-  )}
-  ${grp(
-    'lines',
-    'Lines',
-    '',
-    `
-    <h3 class="sub">Case study: ${esc(CS0.title)}</h3>
-    ${row('primary', CS0.title + ' line', 'Obelisk → Castel Sant’Angelo, around the globe', 'projection', S.layers.primary)}
-    ${row('bestfit', 'Best fit through all three anchors', 'Least-squares great circle incl. St. Peter’s', 'projection', S.layers.bestfit)}
-    <h3 class="sub">Published claims</h3>
-    ${row('sword', 'Sword of Saint Michael', 'Six Michael sanctuaries, drawn as claimed', 'esoteric', S.layers.sword)}
-    ${row('swordfit', 'Sword — best-fit circle', `Sites miss it by ${fmtKm(swf.rms)} on average`, 'projection', S.layers.swordfit)}
-    ${row('torsap', 'Tor Sapienza line (UfoCiclismo)', 'MAAM → Tor Sapienza tower → Tor Cervara', 'esoteric', S.layers.torsap)}
-    ${row('torsapfit', 'Tor Sapienza — best-fit line', `Markers miss it by ${fmtKm(tsf.rms)} on average`, 'projection', S.layers.torsapfit)}
-    ${row('duff', 'Rory Duff — Rome lines', 'Only his claimed former crossing (Meta Romuli) can be placed', 'esoteric', S.layers.duff)}
-    ${UNAVAILABLE.map(u => `<div class="lg off">${sw('sword')}<div class="t"><b>${esc(u.n)}</b><span>${esc(u.why)}</span></div><button class="tog" role="switch" aria-checked="false" disabled aria-label="${esc(u.n)} unavailable"></button></div>`).join('')}
-    <h3 class="sub">Documented</h3>
-    ${row('meridian', 'Vatican Meridian', 'True north–south through the obelisk', 'alignment', S.layers.meridian)}
-    ${row('viasacra', 'Via Sacra', 'Forum route, simplified trace', 'alignment', S.layers.viasacra)}
-    <h3 class="sub">Yours</h3>
-    ${row('user', 'Working line & saved lines', (S.work ? '1 working · ' : '') + S.userLines.length + ' saved', 'user', S.layers.user)}`,
-  )}
-  ${grp(
-    'sources',
-    'Data sources',
-    '',
-    `<p class="small" style="margin:0 0 4px">Which lists feed the site types above. Switch one off to compare with and without it.</p>
+      sub(
+        'sources',
+        'Where the sites come from',
+        `${Object.keys(SOURCES).filter(k => S.src[k]).length} lists on`,
+        `<p class="small" style="margin:0 0 4px">The lists that feed the site types above. Switch one off to compare with and without it.</p>
     ${row('core', SOURCES.core.label, `${srcCount('core')} sites · ${SOURCES.core.sub}`, '', S.src.core, 'core', false, 'data-src')}
     ${row('wonder', SOURCES.wonder.label, `${srcCount('wonder')} sites · ${SOURCES.wonder.sub}`, '', S.src.wonder, 'wonder', false, 'data-src')}
     ${row('fort', SOURCES.fort.label, `${nf(srcCount('fort'))} forts · ${SOURCES.fort.sub}`, '', S.src.fort, 'fortsrc', false, 'data-src')}
@@ -124,22 +88,80 @@ export function renderLayers() {
         '',
       )}${S.imports.length ? '<p class="small" style="margin:4px 0">Swipe an import left to remove it.</p>' : ''}
     <button class="btn" id="lg-import" style="margin:8px 0 6px">+ Import CSV / GeoJSON</button>`,
+      ),
   )}
   ${grp(
-    'analysis',
-    'Analysis overlays',
-    '',
+    'under',
+    'Underground',
+    underOn ? `${underOn} on` : 'all off',
+    (() => {
+      if (!UGCOUNT) {
+        const D = depData();
+        UGCOUNT = {};
+        for (const [g] of UG) {
+          let n = 0;
+          for (let k = 0; k < D.n; k++) if (!D.approx[k] && D.m[k] & UGBIT[g]) n++;
+          UGCOUNT[g] = n;
+        }
+      }
+      const ug = (k, t, sub, swk) =>
+        `<div class="lg ${S.under[k] ? '' : 'off'}">${sw(swk)}<div class="t"><b>${esc(t)}</b><span>${sub}</span></div><button class="tog" role="switch" aria-checked="${S.under[k]}" aria-label="${esc(t)}" data-ug="${k}"></button></div>`;
+      return `<p class="small" style="margin:0 0 4px">Recorded mineral deposits and mines, plus faults and magnetic data. Tap a site to see what lies nearest to it. Records are densest in the USA and Canada and thin in much of Europe, so a blank area may just mean no records.</p>
+    <h3 class="sub">Mineral deposits</h3>${UG.map(([k, t, sub]) => ug(k, t, `${nf(UGCOUNT[k])} records · ${esc(sub)}`, 'ug-' + k)).join('')}
+    <h3 class="sub">Earth structure</h3>
+    ${ug('faults', 'Active faults', 'GEM Global Active Faults: faults that can still slip and cause earthquakes', 'faults')}
+    ${ug('plates', 'Tectonic plate boundaries', 'Bird (2003) PB2002 model', 'plates')}
+    ${ug('mag', 'Magnetic field (world, land and sea)', 'Red = stronger than average (magnetic rock), blue = weaker. NOAA EMM2017 world model at about 25 km detail; Britain shows its 2 km survey.', 'mag')}
+    <div class="lyr-bulk"><button class="btn" data-v2="layers-clear">Switch all underground off</button></div>`;
+    })(),
+  )}
+  ${grp(
+    'lines',
+    'Lines',
+    `${myLines} of yours${examplesOn ? ` · ${examplesOn} example${examplesOn === 1 ? '' : 's'} on` : ''}`,
     `
+    ${row('user', 'Working line & saved lines', (S.work ? '1 working · ' : '') + S.userLines.length + ' saved', 'user', S.layers.user)}
+    ${S.focus ? `<div class="notebar"><span style="flex:1">Showing <b>one line</b>: ${L ? esc(L.short || L.name) : 'none chosen yet'}. Example lines show when you show all lines.</span><button class="btn" id="lg-all">Show all</button></div>` : `<div class="notebar"><span style="flex:1">Showing <b>all enabled lines</b>.</span><button class="btn" id="lg-one">Only the active line</button></div>`}` +
+      sub(
+        'examples',
+        'Example and published lines',
+        `${examplesOn} of ${exampleKeys.length} on`,
+        `
+    <h3 class="sub">Case study: ${esc(CS0.title)}</h3>
+    ${row('primary', CS0.title + ' line', 'Obelisk → Castel Sant’Angelo, around the globe', 'projection', S.layers.primary)}
+    ${row('bestfit', 'Best fit through all three anchors', 'Least-squares great circle incl. St. Peter’s', 'projection', S.layers.bestfit)}
+    <h3 class="sub">Published claims</h3>
+    ${row('sword', 'Sword of Saint Michael', 'Six Michael sanctuaries, drawn as claimed', 'esoteric', S.layers.sword)}
+    ${row('swordfit', 'Sword — best-fit circle', `Sites miss it by ${fmtKm(swf.rms)} on average`, 'projection', S.layers.swordfit)}
+    ${row('torsap', 'Tor Sapienza line (UfoCiclismo)', 'MAAM → Tor Sapienza tower → Tor Cervara', 'esoteric', S.layers.torsap)}
+    ${row('torsapfit', 'Tor Sapienza — best-fit line', `Markers miss it by ${fmtKm(tsf.rms)} on average`, 'projection', S.layers.torsapfit)}
+    ${row('duff', 'Rory Duff — Rome lines', 'Only his claimed former crossing (Meta Romuli) can be placed', 'esoteric', S.layers.duff)}
+    ${UNAVAILABLE.map(u => `<div class="lg off">${sw('sword')}<div class="t"><b>${esc(u.n)}</b><span>${esc(u.why)}</span></div><button class="tog" role="switch" aria-checked="false" disabled aria-label="${esc(u.n)} unavailable"></button></div>`).join('')}
+    <h3 class="sub">Documented</h3>
+    ${row('meridian', 'Vatican Meridian', 'True north–south through the obelisk', 'alignment', S.layers.meridian)}
+    ${row('viasacra', 'Via Sacra', 'Forum route, simplified trace', 'alignment', S.layers.viasacra)}
+`,
+      ),
+  )}
+  ${grp(
+    'display',
+    'Display options',
+    '',
+    v2DisplayOptionsHtml() +
+      `<h3 class="sub">Extras on the map</h3>
     ${row('corridor', 'Proximity corridor', `±${fmtKm(S.corridorKm)} around the line on the map`, '', S.layers.corridor)}
     ${row('intersections', 'Line crossings', S.focus ? 'Needs more than one line on the map' : `${INTS.filter(x => !(S.hideTrivial && x.trivial)).length} shown`, '', S.layers.intersections)}
     ${row('outlines', 'Fort outlines', 'Traced footprints (OpenStreetMap), drawn when zoomed in', '', S.layers.outlines, 'outline')}
-    ${row('labels', 'Labels', '', '', S.layers.labels, 'label')}`,
-  )}
-  ${grp(
-    'base',
-    'Basemap',
-    '',
-    `
+    ${row('labels', 'Labels', '', '', S.layers.labels, 'label')}` +
+      row(
+        'stonework',
+        'Mark precision stonework',
+        `Diamond ring on the ${MEGALITHS.length} sites scored for masonry (Göbekli Tepe, Baalbek, Puma Punku…)`,
+        '',
+        S.layers.stonework,
+        'stonework',
+      ) +
+      `<h3 class="sub">Background map</h3>
     ${row('places', 'Cities & towns', '', '', S.layers.places, 'places')}
     ${row('rivers', 'Rivers', '', '', S.layers.rivers, 'river')}
     ${row('borders', 'Country borders', '', '', S.layers.borders, 'border')}
@@ -149,6 +171,18 @@ export function renderLayers() {
     d =>
       (d.ontoggle = () => {
         OPEN[d.dataset.g] = d.open;
+        // one main group open at a time keeps the screen short
+        if (d.open && !d.classList.contains('sub'))
+          $$('#p-layers > details.grp').forEach(o => {
+            if (o !== d) o.open = false;
+          });
+      }),
+  );
+  $$('#p-layers [data-allcat]').forEach(
+    b =>
+      (b.onclick = () => {
+        for (const [k] of TYPES) S.layers.cat[k] = b.dataset.allcat === '1';
+        changed();
       }),
   );
   if ($('#lg-all')) $('#lg-all').onclick = () => setFocus(false);

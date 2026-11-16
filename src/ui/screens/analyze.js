@@ -104,41 +104,89 @@ export function v2Analyze() {
   const forts = d.sites.filter(m => m.p.cat === 'fort').length,
     stone = d.sites.filter(m => m.p.stone || m.p.cat === 'megalith').length;
   const mg = d.mg;
+  const strong = mg.max && Math.abs(mg.max.v) >= 200;
+  const plural = (n, one, many) => `${nf(n)} ${n === 1 ? one : many}`;
+  const crosses = [
+    plural(d.sites.length, 'site', 'sites'),
+    plural(d.dep.total, 'mineral deposit', 'mineral deposits'),
+    plural(d.fau.crossed, 'fault crossing', 'fault crossings'),
+    plural(d.pla.crossed, 'plate boundary', 'plate boundaries'),
+  ].join(' · ');
+  // one collapsed section; which ones are open is remembered while the app is open
+  const sec = (id, title, count, body) =>
+    `<details class="v2-sec" data-sec="${id}" ${OPEN[id] ? 'open' : ''}><summary><span>${title}</span>${count ? `<span class="v2-label">${count}</span>` : ''}</summary>${body}</details>`;
   return (
     v2Peek(`${esc(KINDTXT[d.kind])} · ±${fmtKm(d.w)}`) +
     `<h2 style="margin:0 0 8px">${esc(L.short || L.name)}</h2>` +
     `<div class="v2-card tinted">
-      <p class="v2-muted" style="margin:0 0 4px">${lenTxt} · heading ${sg.brg.toFixed(1)}°</p>
+      <p class="v2-muted" style="margin:0 0 6px">${lenTxt} · heading ${sg.brg.toFixed(1)}°</p>
+      <p class="v2-glance"><b>Within ±${fmtKm(d.w)}:</b> ${crosses}</p>
+      <p class="v2-glance"><span class="v2-glowkey" style="background:${glowColor(d.kind) || 'var(--line)'}"></span><b>Stands out:</b> ${esc(KINDTXT[d.kind])}${strong ? ` · strong magnetic signal (${mg.max.v > 0 ? '+' : ''}${Math.round(mg.max.v)} nT)` : ''}</p>
+      <p class="v2-glance"><b>Is that unusual?</b> A long line always passes things. Run the test to compare it with random lines.</p>
+      <div class="v2-actions">${v2Button('tool-lab', 'Is it unusual?', 'primary')}${v2Button('fly', 'Fly it in 3D')}${v2Button('follow', '▶ Follow the line')}${v2Button('choose-line', 'Change line')}</div></div>` +
+    `<div class="v2-kicker" style="margin:14px 0 2px">The details</div>` +
+    sec(
+      'sites',
+      'Sites along it',
+      nf(d.sites.length),
+      `<div class="v2-card"><div class="v2-row"><h3>Structures along the line</h3><span class="v2-label">${nf(d.sites.length)}${forts ? ` · ${forts} forts` : ''}${stone ? ` · ${stone} stonework` : ''}</span></div>${siteRows || '<p class="v2-muted">No switched-on site inside the corridor. Widen it, or switch on more site types under Layers.</p>'}${d.sites.length > 14 ? v2Button('sites-all', V2.allSites ? 'Show fewer' : `Show all ${nf(d.sites.length)}`) : ''}<div class="v2-cov">Counts every site type switched on in Layers, not just the category picked in Explore. Line ends (A and B) are not counted.</div></div>`,
+    ) +
+    sec(
+      'min',
+      'Mineral deposits',
+      nf(d.dep.total),
+      `<div class="v2-card"><div class="v2-row"><h3>Mineral deposits</h3><span class="v2-label">${nf(d.dep.total)} within ±${fmtKm(d.w)}</span></div>${
+        d.dep.total
+          ? `<div class="ugchips" style="margin:4px 0 6px">${UG.filter(([g]) => d.dep.counts[g])
+              .map(
+                ([g, t]) =>
+                  `<span class="ugchip" style="cursor:default"><span class="ugsw" style="background:${C.dep[g]}"></span>${esc(t)} <b class="mono">${d.dep.counts[g]}</b></span>`,
+              )
+              .join('')}</div>${depRows}`
+          : '<p class="v2-muted">No deposit records inside the corridor.</p>'
+      }<div class="v2-cov">USGS deposit records (MRDS and world catalogues). Positions are map points, often ±1–2 km. ${nf(depData().nApprox)} records that sit on a shared country or county centre point are left out. About 85% of records are in the USA and Canada, so an empty result in Europe or Asia usually means missing records, not missing minerals.</div></div>`,
+    ) +
+    sec(
+      'fault',
+      'Faults and plate boundaries',
+      `${d.fau.crossed + d.pla.crossed} cross`,
+      `<div class="v2-card"><div class="v2-row"><h3>Active faults</h3><span class="v2-label">${d.fau.crossed} cross · ${d.fau.n - d.fau.crossed} near</span></div>${fRows || '<p class="v2-muted">No mapped active fault crosses the line or comes inside the corridor.</p>'}<div class="v2-cov"><b>Crosses</b> means the mapped fault trace and the line actually intersect. <b>In corridor</b> means the trace comes within ±${fmtKm(d.w)} without crossing. Source: GEM Global Active Faults; old, inactive faults are not mapped.</div></div>` +
+        `<div class="v2-card"><div class="v2-row"><h3>Tectonic plates</h3><span class="v2-label">${d.pla.crossed} cross</span></div>${pRows || '<p class="v2-muted">The line stays inside one plate.</p>'}</div>`,
+    ) +
+    sec(
+      'mag',
+      'Magnetic field',
+      mg.max ? `peak ${mg.max.v > 0 ? '+' : ''}${Math.round(mg.max.v)} nT` : 'no data',
+      `<div class="v2-card"><div class="v2-row"><h3>Magnetic field</h3><span class="v2-label">${mg.km ? fmtKm(mg.km) + ' sampled' : 'no data'}</span></div>${mg.max ? `${v2Find(`data-hl-at="${mg.max.lat},${mg.max.lon}" data-hl-label="Strongest magnetic signal" data-hl-kind="mag" data-off="0"`, `Strongest signal: ${mg.max.v > 0 ? '+' : ''}${Math.round(mg.max.v)} nT`, esc(magWord(mg.max.v)), fmtLL(mg.max.lat, mg.max.lon, 2))}<p class="v2-muted">${fmtKm(mg.strong)} of the line is more than 200 nT from the regional average. Sampled every ~2 km; Britain uses its detailed survey, everywhere else (sea included) the world model at about 25 km detail.</p>` : '<p class="v2-muted">No magnetic data along this line (the world model stops at 80° north and south).</p>'}</div>`,
+    ) +
+    sec('strip', 'Strip view from A to B', '', profileCard()) +
+    sec('sky', 'Sun and moon', '', skyCard()) +
+    sec(
+      'set',
+      'Corridor and line settings',
+      `±${fmtKm(d.w)}`,
+      `<div class="v2-card">
       <p class="v2-muted" style="margin:0">${A ? `A: ${esc(A.n)} (${fmtLL(A.lat, A.lon, 3)})` : ends ? `A: ${fmtLL(ends[0][0], ends[0][1], 3)}` : `Starts ${fmtLL(sg.o[0], sg.o[1], 3)}`}${B && B !== A ? `<br>B: ${esc(B.n)} (${fmtLL(B.lat, B.lon, 3)})` : ends ? `<br>B: ${fmtLL(ends[1][0], ends[1][1], 3)}` : ''}</p>
-      <p class="v2-sub" style="margin:8px 0 4px"><span class="v2-glowkey" style="background:${glowColor(d.kind) || 'var(--line)'}"></span>${esc(KINDTXT[d.kind])}</p>
       <div class="v2-kicker" style="margin-top:8px">Look this far either side of the line</div>${v2CorridorChips()}
       <label class="v2-feature"><span class="v2-description"><strong>Only show sites inside the corridor</strong><small>Hides every other site on the map</small></span><input type="checkbox" data-corronly ${S.corridorOnly ? 'checked' : ''}></label>
       ${L.note ? `<p class="v2-muted" style="margin:6px 0 0">${esc(L.note)}</p>` : ''}
       ${lmRankLine(L)}
       ${L.layer === 'user' && L.id !== 'work' ? `<div class="v2-actions">${v2ButtonId('edit-saved', L.id, 'Edit')}${v2ButtonId('delete-saved', L.id, 'Delete', 'danger')}</div>` : ''}
-      <div class="v2-actions">${v2Button('choose-line', 'Change line')}${v2Button('fly', 'Fly it in 3D')}${v2Button('follow', '▶ Follow the line')}${v2Button('tool-lab', 'Is it unusual? (test)')}</div></div>` +
-    profileCard() +
-    `<h3 style="margin:16px 0 4px">Geological findings</h3>` +
-    `<div class="v2-card"><div class="v2-row"><h3>Mineral deposits</h3><span class="v2-label">${nf(d.dep.total)} within ±${fmtKm(d.w)}</span></div>${
-      d.dep.total
-        ? `<div class="ugchips" style="margin:4px 0 6px">${UG.filter(([g]) => d.dep.counts[g])
-            .map(
-              ([g, t]) =>
-                `<span class="ugchip" style="cursor:default"><span class="ugsw" style="background:${C.dep[g]}"></span>${esc(t)} <b class="mono">${d.dep.counts[g]}</b></span>`,
-            )
-            .join('')}</div>${depRows}`
-        : '<p class="v2-muted">No deposit records inside the corridor.</p>'
-    }<div class="v2-cov">USGS deposit records (MRDS and world catalogues). Positions are map points, often ±1–2 km. ${nf(depData().nApprox)} records that sit on a shared country or county centre point are left out. About 85% of records are in the USA and Canada, so an empty result in Europe or Asia usually means missing records, not missing minerals.</div></div>` +
-    `<div class="v2-card"><div class="v2-row"><h3>Active faults</h3><span class="v2-label">${d.fau.crossed} cross · ${d.fau.n - d.fau.crossed} near</span></div>${fRows || '<p class="v2-muted">No mapped active fault crosses the line or comes inside the corridor.</p>'}<div class="v2-cov"><b>Crosses</b> means the mapped fault trace and the line actually intersect. <b>In corridor</b> means the trace comes within ±${fmtKm(d.w)} without crossing. Source: GEM Global Active Faults; old, inactive faults are not mapped.</div></div>` +
-    `<div class="v2-card"><div class="v2-row"><h3>Tectonic plates</h3><span class="v2-label">${d.pla.crossed} cross</span></div>${pRows || '<p class="v2-muted">The line stays inside one plate.</p>'}</div>` +
-    `<div class="v2-card"><div class="v2-row"><h3>Magnetic field</h3><span class="v2-label">${mg.km ? fmtKm(mg.km) + ' sampled' : 'no data'}</span></div>${mg.max ? `${v2Find(`data-hl-at="${mg.max.lat},${mg.max.lon}" data-hl-label="Strongest magnetic signal" data-hl-kind="mag" data-off="0"`, `Strongest signal: ${mg.max.v > 0 ? '+' : ''}${Math.round(mg.max.v)} nT`, esc(magWord(mg.max.v)), fmtLL(mg.max.lat, mg.max.lon, 2))}<p class="v2-muted">${fmtKm(mg.strong)} of the line is more than 200 nT from the regional average. Sampled every ~2 km; Britain uses its detailed survey, everywhere else (sea included) the world model at about 25 km detail.</p>` : '<p class="v2-muted">No magnetic data along this line (the world model stops at 80° north and south).</p>'}</div>` +
-    `<h3 style="margin:16px 0 4px">Historical findings</h3>` +
-    `<div class="v2-card"><div class="v2-row"><h3>Structures along the line</h3><span class="v2-label">${nf(d.sites.length)}${forts ? ` · ${forts} forts` : ''}${stone ? ` · ${stone} stonework` : ''}</span></div>${siteRows || '<p class="v2-muted">No switched-on site inside the corridor. Widen it, or switch on more site types under Layers.</p>'}${d.sites.length > 14 ? v2Button('sites-all', V2.allSites ? 'Show fewer' : `Show all ${nf(d.sites.length)}`) : ''}<div class="v2-cov">Counts every site type switched on in Layers, not just the category picked in Explore. Line ends (A and B) are not counted.</div></div>` +
-    `<h3 style="margin:16px 0 4px">Sky</h3>` +
-    skyCard() +
-    (precise
-      ? `<details class="v2-card v2-more"><summary>How precise is this line?</summary>${precise}</details>`
-      : '') +
-    `<p class="v2-note">These are observations: what the maps record near the line. Being close to a fault or a mine is not evidence that the line carries energy or was planned. Use “Is it unusual?” to compare with random control lines.</p>`
+      ${precise ? `<details class="v2-more"><summary>How precise is this line?</summary>${precise}</details>` : ''}</div>`,
+    ) +
+    `<p class="v2-note">These are observations: what the maps record near the line. Being close to a fault or a mine is not evidence that the line carries energy or was planned.</p>`
+  );
+}
+
+const OPEN = {}; // which detail sections are open
+export function initAnalyze() {
+  // "toggle" does not bubble, so listen in the capture phase
+  document.getElementById('v2panel').addEventListener(
+    'toggle',
+    e => {
+      const id = e.target.dataset?.sec;
+      if (id) OPEN[id] = e.target.open;
+    },
+    true,
   );
 }

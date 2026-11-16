@@ -25,15 +25,19 @@ function hideCallout() {
 let toastT = 0;
 export function toastUndo(msg, undo, ms = 6000) {
   // deletes happen at once; this is the safety net
+  toastAction(msg, 'Undo', undo, ms);
+}
+/** A message with one button (for example "Save it"). The button closes the message. */
+export function toastAction(msg, label, fn, ms = 6000) {
   toast(msg, ms);
   const t = $('#toast'),
     b = document.createElement('button');
   b.className = 'undo';
-  b.textContent = 'Undo';
+  b.textContent = label;
   t.append(' ', b);
   t.classList.add('act');
   b.onclick = () => {
-    undo();
+    fn();
     t.hidden = true;
     t.classList.remove('act');
     clearTimeout(toastT);

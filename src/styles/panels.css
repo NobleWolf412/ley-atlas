@@ -728,3 +728,50 @@
   padding: 6px 10px;
   font-size: 14px;
 }
+/* Line screen: summary first, details collapsed */
+.v2-glance {
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+.v2-sec {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--raise);
+  margin-top: 8px;
+}
+.v2-sec > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 13px 12px;
+  font-weight: 700;
+}
+.v2-sec > summary::-webkit-details-marker {
+  display: none;
+}
+.v2-sec > summary::after {
+  content: '⌄';
+  color: var(--muted);
+  margin-left: 4px;
+}
+.v2-sec[open] > summary::after {
+  content: '⌃';
+}
+.v2-sec > summary .v2-label {
+  margin-left: auto;
+}
+.v2-sec > .v2-card,
+.v2-sec > div > .v2-card {
+  border: 0;
+  margin: 0;
+  background: transparent;
+  padding-top: 0;
+}
+.v2-sec > .v2-card > .v2-row:first-child,
+.v2-sec > .v2-card + .v2-card {
+  border-top: 1px solid var(--line2);
+  padding-top: 8px;
+}
