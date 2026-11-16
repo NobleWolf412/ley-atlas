@@ -1,4 +1,5 @@
 // Map drawing loop
+import { drawMagGlobe } from '../layers/underground.js';
 import { drawBase, drawGridLabels } from './base-layer.js';
 import { ringPath, strokeMulti } from './paths.js';
 import { drawIcon } from './site-icons.js';
@@ -139,7 +140,10 @@ export function draw() {
     }
   }
   if (!globe && S.layers.sat && !S.satFailed) drawTiles();
-  if (S.under.mag && !globe) drawMag(P);
+  if (S.under.mag) {
+    if (globe) drawMagGlobe();
+    else drawMag(P);
+  }
   if (S.view === 'map' && rv <= 250) drawGridLabels(P, B);
   if (S.layers.outlines && S.layers.cat.fort && rv < 40) {
     ctx.beginPath();

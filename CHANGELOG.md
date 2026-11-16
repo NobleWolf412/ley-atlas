@@ -1,11 +1,12 @@
 # Ley Atlas changelog
 
-## 2.4.1 (15 Nov 2026): category chips on a computer, and counts per country
+## 2.4.1 (15 Nov 2026): category chips on a computer, counts per country, magnetic field on the globe
 
-From Matt: "when I'm on the computer there's no way to slide to the right… when I filter by country, those toggles don't reflect the number existing in that country."
+From Matt: "when I'm on the computer there's no way to slide to the right… when I filter by country, those toggles don't reflect the number existing in that country… also magnetic field toggle doesn't show on globe mode."
 
 - **On a computer, the category chips wrap onto more rows**, so all ten are visible. They were a single row meant to be swiped, with the scrollbar hidden, which left no way to reach the rest with a mouse. On a phone they still swipe.
 - **With a country chosen, the chip counts are for that country.** Egypt shows how many castles, temples, pyramids and so on are in Egypt. Categories with none there are dimmed.
+- **The magnetic field now shows on the globe.** Before, it was only drawn on the flat map, and switching it on threw you out of Globe view. It is drawn a little coarser while the globe is turning and sharpens when it stops.
 
 ## 2.4 (15 Nov 2026): search you can steer
 
@@ -136,7 +137,7 @@ Prompted by Summer: "cool with the map… the tabs are overwhelming."
 - **Mineral deposits are land only** (mines and prospects). Seafloor metal is not included; the InterRidge vents database is not reachable from the build environment.
 - Mineral records are thin outside North America. An empty result is not proof of empty ground, and the line match will lean on faults, magnetic rock and sites there.
 - Line match: the magnetic part uses a 1° polar grid around A. The score compares directions from A only; it does not test whether alignments in general are real.
-- The world magnetic map is regional (about 25 km detail), stops at ±80°, and is drawn on the flat map only.
+- The world magnetic map is regional (about 25 km detail) and stops at ±80°.
 - No cathedral dataset yet; the Wikidata import works from a normal browser.
 - 538 forts are catalogue points without a traced outline.
 - The Google Maps link cannot force satellite view in the phone app.

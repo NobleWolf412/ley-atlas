@@ -1,4 +1,6 @@
 // Draws the underground layers on the map: deposits, faults, plates, magnetic grids
+import { mercY } from '../domain/underground.js';
+import { req } from '../map/draw.js';
 import {
   DEPV,
   MAG,
@@ -118,6 +120,89 @@ export function drawMag(P) {
       ctx.drawImage(magImage(M), sx, sy, Math.max(sw, 0.5), Math.max(sh, 0.5), x0, y0, x1 - x0, y1 - y0);
     }
   }
+  ctx.restore();
+}
+// ---- magnetic layer on the globe ----
+// The flat map can stretch the stored picture into place. On the globe every screen cell is
+// traced back to its latitude and longitude instead, and coloured from the grids directly.
+const MAG_LUT = (() => {
+  // the same colours as magImage: blue = weaker than average, red = stronger
+  const lut = new Uint8ClampedArray(256 * 4);
+  for (let q = 1; q < 256; q++) {
+    const t = (q - 128) / 127,
+      a = Math.abs(t);
+    lut[q * 4] = t > 0 ? Math.round(200 + 55 * (1 - a)) : Math.round(255 * (1 - a * 0.85));
+    lut[q * 4 + 1] = Math.round(255 * (1 - a * 0.75));
+    lut[q * 4 + 2] = t < 0 ? Math.round(200 + 55 * (1 - a)) : Math.round(255 * (1 - a * 0.85));
+    lut[q * 4 + 3] = Math.round(70 + 150 * Math.min(1, a * 1.4));
+  }
+  return lut;
+})();
+// the stored value (1–255, 0 = no data) of a grid at a place
+function gridByte(M, lat, lon) {
+  const G = M.G;
+  if (lat < G.lat0 || lat > G.lat1 || lon < G.lon0 || lon > G.lon1) return 0;
+  const y0 = mercY(G.lat0),
+    y1 = mercY(G.lat1),
+    r = Math.min(M.h - 1, Math.max(0, Math.floor(((y1 - mercY(lat)) / (y1 - y0)) * M.h))),
+    c = Math.min(M.w - 1, Math.max(0, Math.floor(((lon - G.lon0) / (G.lon1 - G.lon0)) * M.w)));
+  return M.a[r * M.w + c];
+}
+let GLOBEMAG = null; // { key, step, cv }
+export function drawMagGlobe() {
+  if (S.view !== 'globe' || (!WMAGD && !MAG)) return;
+  const key = [S.cam.lon, S.cam.lat, S.cam.k, W, H].join('|');
+  // coarse while the globe is moving, fine once it has stopped
+  const still = GLOBEMAG && GLOBEMAG.key === key;
+  const step = still ? 3 : 7;
+  if (!still || GLOBEMAG.step !== step) {
+    const w = Math.ceil(W / step),
+      h = Math.ceil(H / step),
+      cv = (GLOBEMAG && GLOBEMAG.cv) || document.createElement('canvas');
+    cv.width = w;
+    cv.height = h;
+    const g = cv.getContext('2d'),
+      img = g.createImageData(w, h),
+      px = img.data;
+    const k = S.cam.k,
+      sin0 = Math.sin(S.cam.lat * D2R),
+      cos0 = Math.cos(S.cam.lat * D2R);
+    for (let j = 0; j < h; j++) {
+      const y = (H / 2 - (j + 0.5) * step) / k;
+      for (let i = 0; i < w; i++) {
+        const x = ((i + 0.5) * step - W / 2) / k,
+          r2 = x * x + y * y;
+        if (r2 >= 1) continue; // off the globe
+        const z = Math.sqrt(1 - r2);
+        const lat = Math.asin(z * sin0 + y * cos0) / D2R,
+          lon = wrap(S.cam.lon + Math.atan2(x, z * cos0 - y * sin0) / D2R);
+        const q = (MAG && gridByte(MAG, lat, lon)) || (WMAGD && gridByte(WMAGD, lat, lon)) || 0;
+        if (!q) continue;
+        const o = (j * w + i) * 4;
+        px[o] = MAG_LUT[q * 4];
+        px[o + 1] = MAG_LUT[q * 4 + 1];
+        px[o + 2] = MAG_LUT[q * 4 + 2];
+        px[o + 3] = MAG_LUT[q * 4 + 3];
+      }
+    }
+    g.putImageData(img, 0, 0);
+    GLOBEMAG = { key, step, cv };
+    if (step > 3) setTimeout(req, 140); // come back for the sharp version once things settle
+  }
+  ctx.save();
+  ctx.globalAlpha = (0.85 * V2.overlayOpacity) / 100;
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(
+    GLOBEMAG.cv,
+    0,
+    0,
+    GLOBEMAG.cv.width,
+    GLOBEMAG.cv.height,
+    0,
+    0,
+    GLOBEMAG.cv.width * GLOBEMAG.step,
+    GLOBEMAG.cv.height * GLOBEMAG.step,
+  );
   ctx.restore();
 }
 // soft density shading: bins screen points into cells, one radial glow per cell in the dominant colour

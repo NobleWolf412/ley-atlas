@@ -201,7 +201,6 @@ export function initEvents() {
       const k = t.slice(6);
       S.under[k] = e.target.checked;
       if (k === 'mag' && e.target.checked) {
-        setView('map');
         toast('Magnetic field: red = stronger than average, blue = weaker', 3500);
       }
     } else if (t === 'sat') {

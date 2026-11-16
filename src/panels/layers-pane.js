@@ -171,8 +171,7 @@ export function renderLayers() {
         const k = b.dataset.ug;
         S.under[k] = !S.under[k];
         if (k === 'mag' && S.under.mag) {
-          if (S.view !== 'map') setView('map');
-          toast('Magnetic field: red = stronger than average, blue = weaker. Shown on the flat map.', 3500);
+          toast('Magnetic field: red = stronger than average, blue = weaker.', 3500);
         }
         keepScroll('#p-layers', renderLayers);
         renderKey();
