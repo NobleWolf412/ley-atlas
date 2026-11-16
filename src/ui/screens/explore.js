@@ -59,7 +59,7 @@ export function v2Explore() {
     (card
       ? card // a chosen site shows on its own; the search list is for finding one
       : `<div class="v2-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="v2search" value="${esc(V2.query)}" placeholder="Search name, country or type" autocomplete="off" aria-label="Search sites"></div>` +
-        v2Chips(V2.cat, 'data-cat-d') +
+        v2Chips(V2.cat, 'data-cat-d', V2.country) +
         (V2.cat === 'roman'
           ? `<p class="v2-muted" style="margin:2px 0 6px">${nf(ROMAN.rows.length)} dated Roman-era monuments from Pleiades, plus sites whose name says Roman${S.src.pleiades ? '' : ` (turn on Pleiades temples in Layers for ${ROMAN.plRoman.length} more)`}. Thorough, not complete.</p>`
           : '') +

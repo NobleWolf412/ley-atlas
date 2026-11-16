@@ -100,11 +100,13 @@ export function v2CountrySelect(o, attr) {
       : [[o.country, 0], ...COUNTRYOPTS.list];
   return `<label class="v2-country"><span>Country</span><select ${attr} aria-label="Filter by country"><option value="">All countries</option>${list.map(([c, n]) => `<option value="${esc(c)}"${c === o.country ? ' selected' : ''}>${esc(c)} (${nf(n)})</option>`).join('')}</select></label>`;
 }
-function v2CatCounts(o) {
+function v2CatCounts(country) {
+  if (country) assignCountries(ALLP);
   const out = {};
   for (const [k] of DISP) out[k] = 0;
   for (const p of ALLP) {
     if (p.set === 'marker' || !srcOn(p)) continue;
+    if (country && p.country !== country) continue;
     if (shownP(p)) out.all++;
     for (const [k, , f] of DISP) if (k !== 'all' && f(p)) out[k]++;
   }
@@ -112,14 +114,20 @@ function v2CatCounts(o) {
 }
 export let CATCOUNT = null,
   CATKEY = '';
-export function v2Chips(sel, attr) {
+/** The category chips. With a country chosen, each count is the number of sites in that country. */
+export function v2Chips(sel, attr, country = '') {
   const key =
-    ALLP.length + JSON.stringify(S.src) + JSON.stringify(S.layers.cat) + S.imports.map(i => i.on).join();
+    ALLP.length +
+    JSON.stringify(S.src) +
+    JSON.stringify(S.layers.cat) +
+    S.imports.map(i => i.on).join() +
+    '|' +
+    country;
   if (!CATCOUNT || CATKEY !== key) {
-    CATCOUNT = v2CatCounts();
+    CATCOUNT = v2CatCounts(country);
     CATKEY = key;
   }
-  return `<div class="v2-chips" role="group" aria-label="Site categories">${DISP.map(([k, t]) => `<button class="v2-chip" ${attr}="${k}" aria-pressed="${sel === k}">${dispIcon(k)}${esc(t)} <small>${nf(CATCOUNT[k])}</small></button>`).join('')}</div>`;
+  return `<div class="v2-chips" role="group" aria-label="Site categories${country ? ' in ' + esc(country) : ''}">${DISP.map(([k, t]) => `<button class="v2-chip${CATCOUNT[k] ? '' : ' none'}" ${attr}="${k}" aria-pressed="${sel === k}">${dispIcon(k)}${esc(t)} <small>${nf(CATCOUNT[k])}</small></button>`).join('')}</div>`;
 }
 // the small line under a site's name: type, region, and the country when the region does not say it
 function siteSub(p) {
@@ -204,7 +212,7 @@ function v2RenderBrowser(focus) {
     <div class="lm-sig" role="group" aria-label="What counts">${MSIG.map(([k, t, col]) => `<button data-msig="${k}" aria-pressed="${V2.msig[k]}"><span class="lm-dot" style="background:${col}"></span>${t}</button>`).join('')}${lm ? '<button data-bmap="1" class="lm-map">Show on map</button>' : ''}</div></div>`
     : '';
   $('#v2bbody').innerHTML =
-    `<div class="v2-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="v2bq" placeholder="Search name, country or type" value="${esc(o.query)}" autocomplete="off" aria-label="Search sites"></div>${head}${v2Chips(o.cat, 'data-bcat')}${v2CountrySelect(o, 'data-bcountry')}<div id="v2bresults">${v2BrowserResults()}</div>`;
+    `<div class="v2-search"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input type="search" id="v2bq" placeholder="Search name, country or type" value="${esc(o.query)}" autocomplete="off" aria-label="Search sites"></div>${head}${v2Chips(o.cat, 'data-bcat', o.country)}${v2CountrySelect(o, 'data-bcountry')}<div id="v2bresults">${v2BrowserResults()}</div>`;
   // typing only redraws the results, so the search box keeps its focus and the keyboard stays up
   $('#v2bq').oninput = e => {
     o.query = e.target.value;

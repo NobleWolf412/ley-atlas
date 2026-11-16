@@ -379,6 +379,17 @@ svg.ic {
 .v2-chips::-webkit-scrollbar {
   display: none;
 }
+/* with a mouse there is nothing to swipe: show every chip, wrapped onto more rows */
+@media (hover: hover) and (pointer: fine) {
+  .v2-chips {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+/* a category with no sites in the chosen country */
+.v2-chip.none {
+  opacity: 0.45;
+}
 .v2-chip {
   appearance: none;
   flex: none;

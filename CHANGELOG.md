@@ -1,5 +1,12 @@
 # Ley Atlas changelog
 
+## 2.4.1 (15 Nov 2026): category chips on a computer, and counts per country
+
+From Matt: "when I'm on the computer there's no way to slide to the right… when I filter by country, those toggles don't reflect the number existing in that country."
+
+- **On a computer, the category chips wrap onto more rows**, so all ten are visible. They were a single row meant to be swiped, with the scrollbar hidden, which left no way to reach the rest with a mouse. On a phone they still swipe.
+- **With a country chosen, the chip counts are for that country.** Egypt shows how many castles, temples, pyramids and so on are in Egypt. Categories with none there are dimmed.
+
 ## 2.4 (15 Nov 2026): search you can steer
 
 From Matt: "the search functionality should be more intuitive, maybe filter by country… when I type it lags a bit."
