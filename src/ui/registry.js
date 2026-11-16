@@ -37,12 +37,3 @@ export function runAction(name, id) {
   fn(id);
   return true;
 }
-
-// ---- research tools ----
-// Each tool adds a card to the Research tools screen: { id, title, sub, icon, action, actionId? }
-// `action` is the data-v2 action the card runs (registered with registerAction or handled in ui/actions.js).
-const tools = [];
-export function registerTool(tool) {
-  tools.push(tool);
-}
-export const listTools = () => tools.slice();

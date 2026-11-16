@@ -1,5 +1,12 @@
 # Ley Atlas changelog
 
+## 2.6.1 (16 Nov 2026): Star fort lab removed
+
+From Matt: not useful, scrap it.
+
+- **The Star fort lab and the Research tools screen are gone.** "Is it unusual?" is back as its own row in the ☰ menu, and star fort cards are as they were in 2.5.
+- Kept from 2.6, nothing visible: screens can now set their own title and back button, which the alignment finder will use.
+
 ## 2.6 (16 Nov 2026): Research tools and the Star fort lab
 
 From Matt: "Can we start work on this and integrate it cleanly?… if you recommend a new type of layout, we need to adjust it."
