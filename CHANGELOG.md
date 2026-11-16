@@ -1,5 +1,19 @@
 # Ley Atlas changelog
 
+## 2.6 (16 Nov 2026): Research tools and the Star fort lab
+
+From Matt: "Can we start work on this and integrate it cleanly?… if you recommend a new type of layout, we need to adjust it."
+
+- **New: Research tools**, in the ☰ menu. One screen holding every testing tool, each as a card. "Is it unusual?" moved in here, and later tools (alignment finder, grid overlays) will join it. The map screen is unchanged.
+- **New: Star fort lab.** Pick a fort from the quick picks (Bourtange, Palmanova, Naarden, Neuf-Brisach, Goryōkaku, Fort McHenry), or tap any traced star fort on the map and press **✶ Star fort lab** on its card.
+  - **Its shape:** a drawing of the outline with every point numbered and its direction drawn; how many points, how evenly spaced they are, how even their reach is, the area and the year built.
+  - **What its points aim at:** other star forts, or ancient and sacred sites, within 1,000 km, at ±0.5°, ±1° or ±2°. Tap one to see it on the map.
+  - **The sun and moon:** whether a point faces a solstice, equinox or lunar standstill rise or set, for the year it was built (AD 1600 if not recorded).
+  - **Luck check on both:** the same fort is turned to every angle, a quarter degree at a time, to show how often a randomly turned copy would do as well. Most forts aim at about as many things as chance gives.
+  - **Show its directions on the map** draws each point's direction 800 km out and rings the sites it aims at.
+- **All traced star forts (767):** how many have 3, 4, 5… points; whether forts with the same shape face the same way (with the fair-p correction, since seven shapes are tested); and a network test of whether forts point at each other more than chance. Today's answer: 1.02 times what chance gives, which is chance.
+- "Points" are the tips of the traced outline, so ravelins and outworks count. Bourtange shows 10, not its 5 bastions.
+
 ## 2.5 (16 Nov 2026): Sun and moon, and a strip view along the line
 
 Both are on the line's **See what's along it** screen.

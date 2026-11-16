@@ -9,15 +9,22 @@
 const screens = new Map();
 const actions = new Map();
 
-/** @param {string} id the value of V2.tab that shows this screen @param {() => string} render */
-export function registerScreen(id, render) {
-  screens.set(id, render);
+/**
+ * @param {string} id the value of V2.tab that shows this screen
+ * @param {() => string} render returns the screen's HTML
+ * @param {{ title?: string, parent?: string }} [opts] header title, and the screen "←" goes back to
+ */
+export function registerScreen(id, render, opts = {}) {
+  screens.set(id, { render, ...opts });
 }
 export function screenHtml(id) {
-  const render = screens.get(id);
-  if (!render) throw new Error(`No screen registered for "${id}"`);
-  return render();
+  const sc = screens.get(id);
+  if (!sc) throw new Error(`No screen registered for "${id}"`);
+  return sc.render();
 }
+/** Title and parent screen given at registration (undefined for screens that did not give them). */
+export const screenTitle = id => screens.get(id)?.title;
+export const screenParent = id => screens.get(id)?.parent;
 
 /** @param {string} name the data-v2 value @param {(id?: string) => void} fn gets the button's data-id */
 export function registerAction(name, fn) {
@@ -30,3 +37,12 @@ export function runAction(name, id) {
   fn(id);
   return true;
 }
+
+// ---- research tools ----
+// Each tool adds a card to the Research tools screen: { id, title, sub, icon, action, actionId? }
+// `action` is the data-v2 action the card runs (registered with registerAction or handled in ui/actions.js).
+const tools = [];
+export function registerTool(tool) {
+  tools.push(tool);
+}
+export const listTools = () => tools.slice();

@@ -1,4 +1,5 @@
 // Panels: explore, draw, analyze, menu, saved
+import { screenParent, screenTitle } from './registry.js';
 import { registerScreen, screenHtml } from './registry.js';
 import { v2LayersHtml, v2Menu, v2Saved } from './screens/menu.js';
 import { v2Explore } from './screens/explore.js';
@@ -92,12 +93,14 @@ const V2TITLE = (t, short) =>
     analyze: short ? 'Details' : 'Along this line',
     saved: 'My lines',
     menu: 'Menu',
-  })[t] || '';
+  })[t] ||
+  screenTitle(t) ||
+  '';
 function v2Parent() {
   if (V2.host) return V2.tab;
   if (V2.tab === 'analyze') return S.work ? 'draw' : null;
   if (V2.tab === 'saved') return 'menu';
-  return null;
+  return screenParent(V2.tab) || null;
 }
 export function v2Back() {
   if (V2.host) {

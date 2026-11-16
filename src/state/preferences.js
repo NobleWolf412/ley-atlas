@@ -37,6 +37,10 @@ export const V2 = {
   skyYear: 2000, // Sun and moon check: era
   skyTol: 1, // degrees counted as a match
   skyRays: false, // draw sun and moon directions on the map
+  fortLab: null, // Star fort lab: the fort being studied (site id)
+  fortTol: 1, // degrees counted as a point aiming at something
+  fortGroup: 'forts', // what the points are checked against: 'forts' or 'ancient'
+  fortRays: false, // draw the fort's point directions on the map
   browser: null,
 };
 export function v2Persist() {
@@ -58,6 +62,9 @@ export function v2Persist() {
         skyYear: V2.skyYear,
         skyTol: V2.skyTol,
         skyRays: V2.skyRays,
+        fortLab: V2.fortLab,
+        fortTol: V2.fortTol,
+        fortGroup: V2.fortGroup,
       }),
     );
   } catch (e) {}
@@ -90,6 +97,9 @@ export function initPreferences() {
       if (Number.isFinite(p.skyYear) && p.skyYear >= -9000 && p.skyYear <= 3000) V2.skyYear = p.skyYear;
       if ([0.5, 1, 2].includes(p.skyTol)) V2.skyTol = p.skyTol;
       if (typeof p.skyRays === 'boolean') V2.skyRays = p.skyRays;
+      if (typeof p.fortLab === 'string') V2.fortLab = p.fortLab;
+      if ([0.5, 1, 2].includes(p.fortTol)) V2.fortTol = p.fortTol;
+      if (p.fortGroup === 'forts' || p.fortGroup === 'ancient') V2.fortGroup = p.fortGroup;
     } else {
       S.layers.sword = false;
       S.layers.torsap = false;

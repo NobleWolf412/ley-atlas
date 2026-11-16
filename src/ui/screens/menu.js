@@ -19,7 +19,7 @@ export function v2Menu() {
       `${S.userLines.length} saved${S.work ? ' · 1 not saved yet' : ''} · backup and export`,
     ) +
     row('menu-layers', '◧', 'Map layers', 'What shows on the map: site types, minerals, faults, lines') +
-    row('tool-lab', '◈', 'Is it unusual?', 'Test a line or a set of sites against random ones') +
+    row('tools', '◈', 'Research tools', 'Star fort lab, Is it unusual? and more') +
     row(
       'tool-data',
       '⇪',

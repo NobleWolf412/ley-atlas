@@ -1,0 +1,87 @@
+/* Star fort lab */
+.fl-top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.fl-svg {
+  width: 190px;
+  height: 190px;
+  flex: 0 0 auto;
+}
+.fl-kv {
+  flex: 1 1 140px;
+  margin: 0;
+}
+.fl-ring {
+  fill: none;
+  stroke: var(--line, rgba(127, 127, 127, 0.25));
+  stroke-dasharray: 2 4;
+}
+.fl-ray {
+  stroke: var(--muted, #888);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+.fl-ray.hit {
+  stroke: var(--accent);
+  stroke-width: 2;
+  opacity: 1;
+}
+.fl-outline {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+.fl-tip {
+  fill: var(--accent);
+}
+.fl-num {
+  font-size: 9px;
+  fill: var(--text, #ddd);
+  font-weight: 600;
+}
+.fl-n {
+  font-size: 10px;
+  fill: var(--muted, #888);
+  font-weight: 700;
+}
+.fl-bars {
+  display: grid;
+  gap: 3px;
+  margin-top: 6px;
+}
+.fl-bar {
+  display: grid;
+  grid-template-columns: 2.2em 1fr 3.2em;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.fl-bar i {
+  display: block;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--accent);
+  opacity: 0.8;
+  min-width: 2px;
+}
+.fl-bar b {
+  text-align: right;
+  font-weight: 600;
+}
+.fl-bar span {
+  text-align: right;
+  color: var(--muted, #888);
+}
+.fl-kv dd {
+  white-space: nowrap;
+}
+@media (max-width: 480px) {
+  .fl-svg {
+    width: 150px;
+    height: 150px;
+  }
+}

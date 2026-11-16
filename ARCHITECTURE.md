@@ -51,13 +51,14 @@ flowchart TB
 
 A feature never edits the drawing loop or the panel router. In its `initX()` it registers what it needs:
 
-| Extension point                    | Where            | Use it to                                               |
-| ---------------------------------- | ---------------- | ------------------------------------------------------- |
-| `on(event, fn)` / `emit(event, …)` | `core/events.js` | React to something a lower layer announces              |
-| `addDrawLayer(stage, fn)`          | `map/hooks.js`   | Draw on the map at `beforeLines`, `underLines` or `top` |
-| `addSiteHighlighter(fn)`           | `map/hooks.js`   | Name sites that must always be drawn in full and ringed |
-| `registerScreen(id, render)`       | `ui/registry.js` | Add a panel screen (shown when `V2.tab === id`)         |
-| `registerAction(name, fn)`         | `ui/registry.js` | Say what `<button data-v2="name">` does                 |
+| Extension point                              | Where            | Use it to                                                                                                            |
+| -------------------------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `on(event, fn)` / `emit(event, …)`           | `core/events.js` | React to something a lower layer announces                                                                           |
+| `addDrawLayer(stage, fn)`                    | `map/hooks.js`   | Draw on the map at `beforeLines`, `underLines` or `top`                                                              |
+| `addSiteHighlighter(fn)`                     | `map/hooks.js`   | Name sites that must always be drawn in full and ringed                                                              |
+| `registerScreen(id, render, opts)`           | `ui/registry.js` | Add a panel screen (shown when `V2.tab === id`); `opts.title` is its header, `opts.parent` the screen ← goes back to |
+| `registerAction(name, fn)`                   | `ui/registry.js` | Say what `<button data-v2="name">` does                                                                              |
+| `registerTool({ title, sub, icon, action })` | `ui/registry.js` | Add a card to the Research tools screen (☰ → Research tools)                                                        |
 
 Events in use:
 
@@ -122,7 +123,7 @@ Modules export the variables other modules read (`export let W, H`). ES modules 
 
 1. Create `src/features/<name>.js`. Put pure maths in `src/core/` with tests.
 2. Export `initName()` and call it from `src/app.js`. In it, register what the feature needs: actions, a screen, draw layers, event handlers (see _How features plug in_).
-3. Put its button in the screen that should show it (`src/ui/screens/`), as `v2Button('your-action', 'Label')`.
+3. Put its button in the screen that should show it (`src/ui/screens/`), as `v2Button('your-action', 'Label')`. A research tool needs no button: `registerTool` adds its card to Research tools, and `registerScreen(id, render, { title, parent: 'tools' })` gives it a header and a way back (see `features/fort-lab.js`).
 4. Add styles as a new file in `src/styles/` and `@import` it at the end of `src/styles/index.css`.
 
 **Remove a feature:** delete its module, then run `npm run lint`. Every place that still uses it shows up as an error (`no-undef`). Remove those, and lint again until it is clean.

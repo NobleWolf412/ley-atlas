@@ -42,6 +42,8 @@ import { initShareLink, openSharedLink } from './features/share-link.js';
 import { initMapTaps } from './ui/map-taps.js';
 import { initFlyLine } from './features/fly-line.js';
 import { initSkyCheck } from './features/sky-check.js';
+import { initFortLab } from './features/fort-lab.js';
+import { initToolsScreen } from './ui/screens/tools.js';
 
 export function startApp() {
   initUtil();
@@ -73,6 +75,8 @@ export function startApp() {
   initShareLink();
   initFlyLine();
   initSkyCheck();
+  initFortLab();
+  initToolsScreen();
   initPanels();
   initEvents();
   initSwipeDelete();

@@ -8,7 +8,7 @@ import { siteIcon } from '../../render/icons.js';
 import { esc, nf } from '../../core/util.js';
 import { TYPENAME } from '../../domain/site-types.js';
 import { lmCardLine } from '../../features/line-match.js';
-import { v2Button, v2Peek } from '../panel-parts.js';
+import { v2ButtonId, v2Button, v2Peek } from '../panel-parts.js';
 import { satUrl } from '../../core/format.js';
 import { DISPBY } from '../../domain/categories.js';
 import { ROMAN } from '../../data/datasets.js';
@@ -38,7 +38,7 @@ export function v2Explore() {
   const o = exploreOptions(),
     arr = v2Filtered(o);
   const card = s
-    ? `<div class="v2-card tinted"><div class="v2-row" style="justify-content:flex-start;gap:8px">${siteIcon(s)}<h3 style="margin:0">${esc(s.n)}</h3></div><div class="v2-muted" style="margin-top:4px">${esc(TYPENAME[s.cat] || s.cat)}${s.reg ? ' · ' + esc(s.reg) : ''}${s.built ? ' · ' + esc(s.built) : ''}</div>${lmCardLine(s)}<div class="v2-actions">${V2.pick.a && !V2.pick.b && V2.pick.a !== s.id ? v2Button('site-line', `Draw the line to here`, 'primary') + v2Button('site-restart', 'Start here instead') : v2Button('site-restart', 'Start a line here', 'primary')}${v2Button('site-full', 'More details')}<a class="v2-action" href="${satUrl(s.lat, s.lon, 18)}" target="_blank" rel="noopener">Google Maps ↗</a></div>${s.stone ? `<p class="v2-muted" style="margin-top:8px">Stonework: masonry ${s.stone.masonry}/4, precision ${s.stone.precision}/4${s.stone.tons ? `, largest block ${nf(s.stone.tons)} t` : ''}${s.stone.rock ? ', rock-cut' : ''}.</p>` : ''}<div id="v2ug" class="v2-muted" style="margin-top:6px">Checking what lies underground nearby…</div></div>`
+    ? `<div class="v2-card tinted"><div class="v2-row" style="justify-content:flex-start;gap:8px">${siteIcon(s)}<h3 style="margin:0">${esc(s.n)}</h3></div><div class="v2-muted" style="margin-top:4px">${esc(TYPENAME[s.cat] || s.cat)}${s.reg ? ' · ' + esc(s.reg) : ''}${s.built ? ' · ' + esc(s.built) : ''}</div>${lmCardLine(s)}<div class="v2-actions">${V2.pick.a && !V2.pick.b && V2.pick.a !== s.id ? v2Button('site-line', `Draw the line to here`, 'primary') + v2Button('site-restart', 'Start here instead') : v2Button('site-restart', 'Start a line here', 'primary')}${v2Button('site-full', 'More details')}${s.ext && s.ext.t && s.ext.t.length >= 2 ? v2ButtonId('fort-lab', s.id, '✶ Star fort lab') : ''}<a class="v2-action" href="${satUrl(s.lat, s.lon, 18)}" target="_blank" rel="noopener">Google Maps ↗</a></div>${s.stone ? `<p class="v2-muted" style="margin-top:8px">Stonework: masonry ${s.stone.masonry}/4, precision ${s.stone.precision}/4${s.stone.tons ? `, largest block ${nf(s.stone.tons)} t` : ''}${s.stone.rock ? ', rock-cut' : ''}.</p>` : ''}<div id="v2ug" class="v2-muted" style="margin-top:6px">Checking what lies underground nearby…</div></div>`
     : dep
       ? `<div class="v2-card tinted"><h3>${esc(dep.n)}</h3><p class="v2-sub">${esc(dep.groups.join(', '))}${dep.magnetite ? ' (magnetite)' : ''} · ${esc(dep.cc)} · ${esc(dep.status)}${dep.type ? ' · ' + esc(dep.type) : ''}</p><p class="v2-muted">${esc(dep.src)}</p><div class="v2-actions"><a class="v2-action" href="${satUrl(dep.lat, dep.lon)}" target="_blank" rel="noopener">Google Maps ↗</a></div></div>`
       : S.sel?.type === 'fault'
