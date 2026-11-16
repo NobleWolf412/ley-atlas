@@ -1,4 +1,7 @@
 // Discovery: what lies along the active line
+import { TYPESHORT } from '../domain/site-types.js';
+import { depInfo, plateLabel } from '../domain/underground.js';
+import { stopsAlong } from '../core/flight.js';
 import { changed } from '../ui/sheet.js';
 import { toast } from '../ui/intro.js';
 import { addDrawLayer } from '../map/hooks.js';
@@ -87,7 +90,7 @@ function v2MagAlong(L) {
   }
   return out;
 }
-function v2LineKey(L) {
+export function v2LineKey(L) {
   return (
     L.id +
     '|' +
@@ -247,4 +250,47 @@ export function v2LineChanged() {
 export function initDiscovery() {
   addDrawLayer('beforeLines', v2PreDraw);
   addDrawLayer('underLines', (P, path) => v2Glow(path));
+}
+
+// ---------- what lies along a line, in order (shared by the 3D flight and the cross-section) ----------
+/**
+ * Everything found along a line, placed by distance along it.
+ * @returns {{ stops: Array<{ item, km, off }>, summary: string }}
+ *   item.kind is 'site' | 'deposit' | 'fault' | 'plate'
+ */
+export function findingsAlong(L, path) {
+  const d = v2Discover();
+  const sites = MATCH.filter(m => m.status !== 'out')
+    .slice(0, 400)
+    .map(m => ({
+      kind: 'site',
+      lat: m.p.lat,
+      lon: m.p.lon,
+      name: m.p.n,
+      sub: m.anchor ? 'On the line' : TYPESHORT[m.p.cat] || 'Site',
+      p: m.p,
+      d: m.d,
+      anchor: m.anchor,
+    }));
+  const deposits = d
+    ? d.dep.near.slice(0, 400).map(o => {
+        const i = depInfo(o.k);
+        return {
+          kind: 'deposit',
+          k: o.k,
+          d: o.d,
+          lat: i.lat,
+          lon: i.lon,
+          name: i.n,
+          sub: i.groups.join(', ') || 'Mineral deposit',
+        };
+      })
+    : [];
+  const crossing = (list, kind, name) =>
+    list
+      .filter(h => h.d === 0)
+      .map(h => ({ kind, lat: h.lat, lon: h.lon, name: name(h.r), sub: 'Crosses the line here', ref: h.r }));
+  const faults = d ? crossing(d.fau.list, 'fault', r => r.name || 'Active fault') : [];
+  const plates = d ? crossing(d.pla.list, 'plate', r => `${plateLabel(r.name)} plate boundary`) : [];
+  return { stops: stopsAlong(path, [...sites, ...deposits, ...faults, ...plates]), summary: v2Summary(d) };
 }

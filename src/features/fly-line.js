@@ -1,4 +1,5 @@
 // Fly the line: a full-screen 3D flight along the active line, over satellite imagery and real terrain
+import { findingsAlong } from './discovery.js';
 //
 // The 3D engine (MapLibre GL) is only downloaded the first time someone flies.
 // Tiles: Esri World Imagery (satellite) and the open Terrain Tiles on AWS (elevation). No key needed.
@@ -8,21 +9,16 @@ import {
   flightPosition,
   flightSeconds,
   flightZoom,
-  stopsAlong,
   stopsNear,
   turn,
 } from '../core/flight.js';
 import { fmtKm } from '../core/format.js';
 import { esc, nf } from '../core/util.js';
-import { MATCH } from '../domain/analysis.js';
 import { activeLine } from '../domain/lines.js';
-import { TYPESHORT } from '../domain/site-types.js';
-import { depInfo, plateLabel } from '../domain/underground.js';
 import { siteIcon } from '../render/icons.js';
 import { S } from '../state/state.js';
 import { v2HandleAction } from '../ui/actions.js';
 import { registerAction } from '../ui/registry.js';
-import { v2Discover, v2Summary } from './discovery.js';
 
 const SATELLITE =
   'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
@@ -30,45 +26,9 @@ const TERRAIN = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}
 const PITCH = 66;
 const SPEEDS = [1, 2, 4, 0.5];
 const MAX_SITE_PINS = 80;
-const MAX_DEPOSITS = 400;
 const COLORS = { line: '#ffd166', deposit: '#f2a93b', fault: '#ff5a4d', plate: '#c77dff' };
 
 let F = null; // the open flight, or null
-
-// ---------- what the flight passes ----------
-function collectStops(L, path) {
-  const d = v2Discover();
-  const sites = MATCH.filter(m => m.status !== 'out')
-    .slice(0, 400)
-    .map(m => ({
-      kind: 'site',
-      lat: m.p.lat,
-      lon: m.p.lon,
-      name: m.p.n,
-      sub: m.anchor ? 'On the line' : TYPESHORT[m.p.cat] || 'Site',
-      p: m.p,
-      anchor: m.anchor,
-    }));
-  const deposits = d
-    ? d.dep.near.slice(0, MAX_DEPOSITS).map(o => {
-        const i = depInfo(o.k);
-        return {
-          kind: 'deposit',
-          lat: i.lat,
-          lon: i.lon,
-          name: i.n,
-          sub: i.groups.join(', ') || 'Mineral deposit',
-        };
-      })
-    : [];
-  const crossing = (list, kind, name) =>
-    list
-      .filter(h => h.d === 0)
-      .map(h => ({ kind, lat: h.lat, lon: h.lon, name: name(h.r), sub: 'Crosses the line here' }));
-  const faults = d ? crossing(d.fau.list, 'fault', r => r.name || 'Active fault') : [];
-  const plates = d ? crossing(d.pla.list, 'plate', r => `${plateLabel(r.name)} plate boundary`) : [];
-  return { stops: stopsAlong(path, [...sites, ...deposits, ...faults, ...plates]), summary: v2Summary(d) };
-}
 
 // ---------- the screen ----------
 function buildScreen(L) {
@@ -290,7 +250,7 @@ export async function flyActiveLine() {
   const L = activeLine();
   if (!L || F) return;
   const path = buildFlightPath(L.segs);
-  const { stops, summary } = collectStops(L, path);
+  const { stops, summary } = findingsAlong(L, path);
   F = {
     el: buildScreen(L),
     path,

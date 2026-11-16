@@ -11,6 +11,8 @@ Built by Matt and Summer. Mainly used in Chrome on Android.
 - 12,621 sites: star forts, castles, UNESCO sites, Roman sites (Pleiades), megaliths, project sites
 - Underground layers: mineral deposits, active faults, plate boundaries, world magnetic map (NOAA EMM2017, with a 2 km survey for Britain)
 - Fly the line: a 3D flight along any line over satellite imagery and terrain, ending on "is it unusual?"
+- Sun and moon: does a line point at a solstice, equinox or lunar standstill, for any era back to 3000 BC, with the odds of that happening by chance
+- Along the line: a strip view of ground height, magnetic signal and every finding from A to B
 - Line match: ranks every possible point B for a chosen point A against the 30 directions beside it, with a fair p-value that allows for picking the best one
 
 See [CHANGELOG.md](CHANGELOG.md) for the history.

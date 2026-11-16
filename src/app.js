@@ -41,6 +41,7 @@ import { changed } from './ui/sheet.js';
 import { initShareLink, openSharedLink } from './features/share-link.js';
 import { initMapTaps } from './ui/map-taps.js';
 import { initFlyLine } from './features/fly-line.js';
+import { initSkyCheck } from './features/sky-check.js';
 
 export function startApp() {
   initUtil();
@@ -71,6 +72,7 @@ export function startApp() {
   initLineOverlay();
   initShareLink();
   initFlyLine();
+  initSkyCheck();
   initPanels();
   initEvents();
   initSwipeDelete();

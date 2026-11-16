@@ -1,0 +1,140 @@
+/* "Along the line" strip diagram (features/line-profile.js) */
+.pl {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 4px;
+  font-family: var(--f-body);
+}
+.pl-lab {
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--muted);
+}
+.pl-small {
+  font-size: 10.5px;
+  fill: var(--muted);
+}
+.pl-land {
+  fill: #b9a57e;
+  stroke: #8a744b;
+  stroke-width: 1;
+}
+:root[data-theme='dark'] .pl-land {
+  fill: #6f6146;
+  stroke: #a38f66;
+}
+.pl-sea {
+  fill: #6aa6d6;
+}
+.pl-wait {
+  fill: var(--panel2);
+  stroke: var(--line2);
+}
+.pl-base {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+.pl-frame {
+  fill: none;
+  stroke: var(--line);
+}
+.pl-peak {
+  fill: var(--text);
+}
+.pl-fault {
+  stroke: #d8432f;
+  stroke-width: 2;
+  opacity: 0.85;
+}
+.pl-plate {
+  stroke: #8e4fd0;
+  stroke-width: 3.5;
+  opacity: 0.85;
+}
+.pl-dep {
+  fill: #e09a1c;
+  stroke: #6b4705;
+  stroke-width: 0.6;
+}
+.pl-site {
+  fill: var(--accent);
+  opacity: 0.8;
+}
+.pl-site.anchor {
+  fill: var(--text);
+  opacity: 1;
+}
+.pl-hit {
+  cursor: pointer;
+}
+.pl-hit:hover .pl-dep,
+.pl-hit:hover .pl-site {
+  stroke: var(--text);
+  stroke-width: 1.5;
+}
+.pl-key {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 0 4px 0 6px;
+  vertical-align: -1px;
+  border-radius: 2px;
+}
+.pl-key.fault {
+  background: #d8432f;
+  width: 3px;
+}
+.pl-key.plate {
+  background: #8e4fd0;
+  width: 4px;
+}
+.pl-key.dep {
+  background: #e09a1c;
+  transform: rotate(45deg) scale(0.75);
+}
+.pl-key.site {
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* Sun and moon (features/sky-check.js) */
+.sky-chips {
+  margin: 4px 0 8px;
+}
+.sky-chips .v2-action {
+  min-height: 34px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+}
+.sky-end {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line2);
+}
+.sky-hit {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+}
+.sky-hit strong {
+  display: block;
+  font-size: 13.5px;
+}
+.sky-hit small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+.sky-dot {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: #e3a21a;
+}
+.sky-hit.moon .sky-dot {
+  background: #7d9fd1;
+}

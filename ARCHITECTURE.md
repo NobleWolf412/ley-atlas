@@ -97,6 +97,8 @@ sequenceDiagram
 
 **Search.** `core/text-search.js` (accent folding, match ranking, top-k ordering) and `core/countries.js` are pure and tested. `domain/countries.js` gives every site a country. `ui/site-lists.js` filters and ranks; while typing, only the results container (`#v2xresults`, `#v2bresults`) is redrawn.
 
+**Sky and strip view.** `core/sky.js` (axial tilt by year, rise and set azimuths, matching, luck) is pure and tested. `features/sky-check.js` renders the Sun and moon card and draws the rays through `addDrawLayer('top')`. `features/line-profile.js` draws the Along the line strip; ground heights come from Terrarium tiles fetched on demand. Both use `findingsAlong()` in `features/discovery.js`, which the 3D flight uses too.
+
 **Share links.** `core/share.js` encodes and decodes the address (`?a=…&b=…`, `?p=…`, `?l=…`, `?c=…`); `features/share-link.js` builds one from the current state and applies one at start-up.
 
 - Modules do **no work when imported**: at module level there are only functions and constant literals. Anything that needs data, the DOM or another module runs inside the module's `initX()` function.

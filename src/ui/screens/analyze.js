@@ -1,5 +1,7 @@
 // Analyze screen: everything found along the active line
 import { activeLine, lineDist } from '../../domain/lines.js';
+import { profileCard } from '../../features/line-profile.js';
+import { skyCard } from '../../features/sky-check.js';
 import { v2Button, v2ButtonId, v2CorridorChips, v2Find, v2Peek } from '../panel-parts.js';
 import { KINDTXT, glowColor, v2Discover } from '../../features/discovery.js';
 import { findPoint } from '../../domain/points.js';
@@ -115,6 +117,7 @@ export function v2Analyze() {
       ${lmRankLine(L)}
       ${L.layer === 'user' && L.id !== 'work' ? `<div class="v2-actions">${v2ButtonId('edit-saved', L.id, 'Edit')}${v2ButtonId('delete-saved', L.id, 'Delete', 'danger')}</div>` : ''}
       <div class="v2-actions">${v2Button('choose-line', 'Change line')}${v2Button('fly', 'Fly it in 3D')}${v2Button('follow', '▶ Follow the line')}${v2Button('tool-lab', 'Is it unusual? (test)')}</div></div>` +
+    profileCard() +
     `<h3 style="margin:16px 0 4px">Geological findings</h3>` +
     `<div class="v2-card"><div class="v2-row"><h3>Mineral deposits</h3><span class="v2-label">${nf(d.dep.total)} within ±${fmtKm(d.w)}</span></div>${
       d.dep.total
@@ -131,6 +134,8 @@ export function v2Analyze() {
     `<div class="v2-card"><div class="v2-row"><h3>Magnetic field</h3><span class="v2-label">${mg.km ? fmtKm(mg.km) + ' sampled' : 'no data'}</span></div>${mg.max ? `${v2Find(`data-hl-at="${mg.max.lat},${mg.max.lon}" data-hl-label="Strongest magnetic signal" data-hl-kind="mag" data-off="0"`, `Strongest signal: ${mg.max.v > 0 ? '+' : ''}${Math.round(mg.max.v)} nT`, esc(magWord(mg.max.v)), fmtLL(mg.max.lat, mg.max.lon, 2))}<p class="v2-muted">${fmtKm(mg.strong)} of the line is more than 200 nT from the regional average. Sampled every ~2 km; Britain uses its detailed survey, everywhere else (sea included) the world model at about 25 km detail.</p>` : '<p class="v2-muted">No magnetic data along this line (the world model stops at 80° north and south).</p>'}</div>` +
     `<h3 style="margin:16px 0 4px">Historical findings</h3>` +
     `<div class="v2-card"><div class="v2-row"><h3>Structures along the line</h3><span class="v2-label">${nf(d.sites.length)}${forts ? ` · ${forts} forts` : ''}${stone ? ` · ${stone} stonework` : ''}</span></div>${siteRows || '<p class="v2-muted">No switched-on site inside the corridor. Widen it, or switch on more site types under Layers.</p>'}${d.sites.length > 14 ? v2Button('sites-all', V2.allSites ? 'Show fewer' : `Show all ${nf(d.sites.length)}`) : ''}<div class="v2-cov">Counts every site type switched on in Layers, not just the category picked in Explore. Line ends (A and B) are not counted.</div></div>` +
+    `<h3 style="margin:16px 0 4px">Sky</h3>` +
+    skyCard() +
     (precise
       ? `<details class="v2-card v2-more"><summary>How precise is this line?</summary>${precise}</details>`
       : '') +

@@ -1,5 +1,19 @@
 # Ley Atlas changelog
 
+## 2.5 (16 Nov 2026): Sun and moon, and a strip view along the line
+
+Both are on the line's **See what's along it** screen.
+
+- **Along the line.** A strip diagram from A to B: ground height, the magnetic signal as a colour band, and every fault crossing, plate boundary, mineral deposit and site placed at its distance along the line. Tap any mark to find it on the map.
+  - Ground heights come from the open Terrain Tiles (the same ones the 3D flight uses), so they need a connection; the rest works offline.
+  - It is a strip map of the surface, not a geological section, and says so. Heights are stretched to be visible.
+- **Sun and moon.** Checks whether the line points at a June or December solstice, an equinox, or a major or minor lunar standstill, rising or setting, from each end of the line and looking both ways along it.
+  - **Pick the era**, from today back to 3000 BC. Earth's tilt changes slowly, so a line laid out on the midsummer sunrise in 2500 BC is about 1° off today. The check allows for that.
+  - **Pick what counts as a match:** ±0.5°, ±1° or ±2°.
+  - **Luck check, always shown:** with up to 14 such directions at each end, a line in a random direction matches one of them within ±1° about one time in four or five. A match only means something if it is much closer than that, or was planned for.
+  - **Show directions on the map** draws the sun (gold) and moon (blue) directions from each end; sets are dashed, and a direction the line matches is drawn thicker.
+  - Assumes a flat horizon (hills shift a sunrise point by about 1–2° per degree of horizon height).
+
 ## 2.4.1 (15 Nov 2026): category chips on a computer, counts per country, magnetic field on the globe
 
 From Matt: "when I'm on the computer there's no way to slide to the right… when I filter by country, those toggles don't reflect the number existing in that country… also magnetic field toggle doesn't show on globe mode."

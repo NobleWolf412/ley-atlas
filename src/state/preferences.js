@@ -34,6 +34,9 @@ export const V2 = {
   plateCache: null,
   magCache: null,
   country: '', // Explore's country filter ('' = all countries)
+  skyYear: 2000, // Sun and moon check: era
+  skyTol: 1, // degrees counted as a match
+  skyRays: false, // draw sun and moon directions on the map
   browser: null,
 };
 export function v2Persist() {
@@ -52,6 +55,9 @@ export function v2Persist() {
         ugFault: V2.ugFault,
         lineColor: V2.lineColor,
         dcat: V2.cat,
+        skyYear: V2.skyYear,
+        skyTol: V2.skyTol,
+        skyRays: V2.skyRays,
       }),
     );
   } catch (e) {}
@@ -81,6 +87,9 @@ export function initPreferences() {
       else if (p.cluster === false) V2.zoomMode = 'all';
       if (typeof p.lineColor === 'string' || p.lineColor === null) V2.lineColor = p.lineColor || null;
       if (typeof p.dcat === 'string') V2.cat = p.dcat;
+      if (Number.isFinite(p.skyYear) && p.skyYear >= -9000 && p.skyYear <= 3000) V2.skyYear = p.skyYear;
+      if ([0.5, 1, 2].includes(p.skyTol)) V2.skyTol = p.skyTol;
+      if (typeof p.skyRays === 'boolean') V2.skyRays = p.skyRays;
     } else {
       S.layers.sword = false;
       S.layers.torsap = false;
