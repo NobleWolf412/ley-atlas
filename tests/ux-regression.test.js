@@ -1,11 +1,13 @@
 // @vitest-environment jsdom
 import { readFileSync } from 'node:fs';
-import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { loadDatasets, loadDeferredDatasets } from '../src/data/datasets.js';
 import { initPoints, rebuildPoints, findPoint, ALLP } from '../src/domain/points.js';
-import { initLines, buildLines, activeLine } from '../src/domain/lines.js';
+import { initLines, buildLines, activeLine, LINEBY, LINES } from '../src/domain/lines.js';
 import { analyse } from '../src/domain/analysis.js';
-import { S } from '../src/state/state.js';
+import { S, initState, persist, KEY } from '../src/state/state.js';
+import { changed } from '../src/ui/sheet.js';
+import { openLinePicker } from '../src/ui/picker.js';
 import { V2, initPreferences, v2Persist } from '../src/state/preferences.js';
 import { GEO } from '../src/core/geo.js';
 import { PAL, setC, buildSTY } from '../src/render/palette.js';
@@ -98,6 +100,104 @@ describe('research regression', () => {
     expect(S.imports[0].rows).toEqual(rows);
     expect(S.userLines[0].name).toBe('Saved line');
     expect(S.markers[0].n).toBe('Field note');
+  });
+});
+
+describe('removing built-in case studies', () => {
+  beforeEach(() => {
+    vi.mocked(changed).mockImplementation(() => {
+      buildLines();
+      persist();
+    });
+    S.work = { name: 'In progress', o: [51, 1], brg: 45, len: 100, anchors: [] };
+    S.userLines = [{ id: 'saved', name: 'Keep me', o: [50, 2], brg: 30, len: 50, anchors: [] }];
+    buildLines();
+    renderLayers();
+  });
+  afterEach(() => vi.mocked(changed).mockReset());
+
+  it('removes both models from layers and the picker, preserving personal work and sites', () => {
+    const work = structuredClone(S.work);
+    const saved = structuredClone(S.userLines);
+    const count = ALLP.length;
+    S.active = 'primary';
+    S.layers.primary = true;
+    S.layers.bestfit = true;
+    document.querySelector('[data-remove-study="vatican"]').click();
+    expect(S.removedCaseStudies).toEqual(['vatican']);
+    expect(S.active).toBeNull();
+    expect(S.layers.primary).toBe(false);
+    expect(S.layers.bestfit).toBe(false);
+    expect(LINEBY.primary).toBeUndefined();
+    expect(LINEBY.bestfit).toBeUndefined();
+    expect(LINEBY.saved).toBeDefined();
+    expect(LINEBY.work).toBeDefined();
+    expect(S.work).toEqual(work);
+    expect(S.userLines).toEqual(saved);
+    expect(ALLP.length).toBe(count);
+    expect(findPoint('obelisk')).toBeDefined();
+    expect(document.querySelector('[data-layer="primary"]')).toBeNull();
+    expect(document.querySelector('[data-layer="bestfit"]')).toBeNull();
+    expect(document.querySelector('[data-g="examples"] > summary').textContent).toContain('0 of 7 on');
+    openLinePicker();
+    expect(document.querySelector('#pickbody [data-id="primary"]')).toBeNull();
+    expect(document.querySelector('#pickbody [data-id="bestfit"]')).toBeNull();
+    expect(document.querySelector('#pickbody [data-id="saved"]')).not.toBeNull();
+  });
+
+  it('supports Undo and later restoration without switching restored lines on', async () => {
+    document.querySelector('[data-g="lines"]').open = true;
+    document.querySelector('[data-g="examples"]').open = true;
+    S.active = 'bestfit';
+    S.layers.primary = true;
+    S.layers.bestfit = true;
+    document.querySelector('[data-remove-study="vatican"]').click();
+    document.querySelector('#toast .undo').click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(document.querySelector('[data-g="lines"]').open).toBe(true);
+    expect(document.querySelector('[data-g="examples"]').open).toBe(true);
+    expect(S.removedCaseStudies).toEqual([]);
+    expect(S.active).toBe('bestfit');
+    expect(S.layers.primary).toBe(true);
+    expect(S.layers.bestfit).toBe(true);
+    expect(LINEBY.bestfit).toBeDefined();
+    document.querySelector('[data-remove-study="vatican"]').click();
+    document.querySelector('[data-restore-study="vatican"]').click();
+    expect(S.removedCaseStudies).toEqual([]);
+    expect(S.layers.primary).toBe(false);
+    expect(S.layers.bestfit).toBe(false);
+    expect(S.active).toBeNull();
+    expect(LINEBY.primary).toBeDefined();
+  });
+
+  it('persists removal across reload and backup restore', () => {
+    S.active = 'work';
+    document.querySelector('[data-remove-study="vatican"]').click();
+    const backup = stateCode();
+    S.removedCaseStudies = [];
+    initState();
+    initPreferences();
+    buildLines();
+    expect(S.removedCaseStudies).toEqual(['vatican']);
+    expect(LINES.some(l => l.group === 'cs:vatican')).toBe(false);
+    expect(S.active).toBe('work');
+    S.removedCaseStudies = [];
+    loadState(backup);
+    expect(S.removedCaseStudies).toEqual(['vatican']);
+    expect(LINEBY.primary).toBeUndefined();
+  });
+
+  it('loads older saves and backups without losing current removals or personal lines', () => {
+    globalThis.localStorage.setItem(KEY, JSON.stringify({ userLines: S.userLines, work: S.work }));
+    initState();
+    expect(S.removedCaseStudies).toEqual([]);
+    S.removedCaseStudies = ['vatican'];
+    const legacy = JSON.parse(decodeURIComponent(escape(atob(stateCode()))));
+    legacy.v = 3;
+    delete legacy.removedCaseStudies;
+    loadState(btoa(unescape(encodeURIComponent(JSON.stringify(legacy)))));
+    expect(S.removedCaseStudies).toEqual(['vatican']);
+    expect(S.userLines[0].id).toBe('saved');
   });
 });
 

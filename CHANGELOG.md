@@ -1,5 +1,10 @@
 # Ley Atlas changelog
 
+## Unreleased: Remove case studies
+
+- Layers → Lines now lets you remove a built-in case study, including both its line and best-fit model, from the map and line picker. Removal stays saved on this device and in backups.
+- Undo restores the previous switches and active line. Removed case studies can also be restored later, with their lines switched off. Working lines, saved lines, site records and Research Collections are preserved.
+
 ## Unreleased: Guided site import
 
 - Paste place names, copied lists or coordinates and choose **Find sites**. Review atlas matches, choose between namesakes, correct missing locations with coordinates or a map pin, then import only selected sites.

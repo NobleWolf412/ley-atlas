@@ -48,7 +48,7 @@ function userLineObj(u, isWork) {
 export function buildLines() {
   const out = [],
     g = o => out.push(o);
-  for (const c of CASE_STUDIES) {
+  for (const c of CASE_STUDIES.filter(c => !S.removedCaseStudies.includes(c.id))) {
     const A = PT.get(c.nodes[0]),
       B = PT.get(c.nodes[1]),
       cat = 'Case study: ' + c.title;
