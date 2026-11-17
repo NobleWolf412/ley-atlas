@@ -137,6 +137,10 @@ Modules export the variables other modules read (`export let W, H`). ES modules 
 | `npm run build`        | Production build into `dist/`                          |
 | `npm run check`        | All of the above; CI runs the same on every push       |
 
+## Find alignments
+
+`core/alignments.js` tests every pair of sites as the two ends of a line and counts the sites within the width between them. A pair is only kept when no other site on the line lies beyond either end, so each alignment is reported once. The search runs in slices (`step(ms)`). `features/alignments.js` runs it on the sites in view, then on three randomly nudged copies (`nudged`) for the one-line verdict, and registers the `align` screen, its actions, a draw layer and a site highlighter.
+
 ## Site stories
 
 `features/site-story.js` fills the "About this place" block on a site card. It looks for an article in this order: the address the site list gives (`wikiUrl` / `wiki`), the list's Wikidata id, then a Wikipedia article within 2 km whose name matches (`core/wiki.js: pickNearby`, which returns nothing rather than a weak match). Results are kept per site while the app is open. The block updates itself in place when the reply arrives, so the panel is not redrawn.

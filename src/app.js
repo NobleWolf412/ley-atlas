@@ -42,6 +42,7 @@ import { initShareLink, openSharedLink } from './features/share-link.js';
 import { initMapTaps } from './ui/map-taps.js';
 import { initFlyLine } from './features/fly-line.js';
 import { initSkyCheck } from './features/sky-check.js';
+import { initAlignments } from './features/alignments.js';
 import { initAnalyze } from './ui/screens/analyze.js';
 
 export function startApp() {
@@ -74,6 +75,7 @@ export function startApp() {
   initShareLink();
   initFlyLine();
   initSkyCheck();
+  initAlignments();
   initAnalyze();
   initPanels();
   initEvents();

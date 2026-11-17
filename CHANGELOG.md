@@ -1,5 +1,17 @@
 # Ley Atlas changelog
 
+## 2.8 (16 Nov 2026): Find alignments
+
+The "spot patterns" job from the mission, which had nothing built for it.
+
+- **New: Find alignments**, in the ☰ menu. Move the map to an area, press **Search the sites in view**, and it lists the straight lines that pass through 4 or more of the sites showing, each within 1 km of the line.
+  - Each result shows how many sites, how long, its two end sites and how tightly the sites sit on it. All the lines are drawn on the map; tap one to highlight it and ring its sites.
+  - **Open as my line** turns a result into your line, so you can see what it crosses, fly it and test it like any other.
+  - **One-line luck check.** The same sites are nudged 5–25 km at random three times and searched again. The verdict says whether the real lines beat that. Around southern England, 12 sites on a line sounds impressive, but nudged copies gave 13, so the verdict there reads "about what chance gives".
+  - Sites in the same town (closer than 3 km along the line) count once, so one cluster cannot make a line.
+  - Handles up to 400 sites at a time; with more in view it asks you to zoom in or switch site types off. About 2 seconds on a slow phone.
+- The **Save it** offer for an unsaved line now also covers lines made from a bearing and lines opened from the alignment finder.
+
 ## 2.7 (16 Nov 2026): a calmer app, and something to read about each site
 
 From Matt: "an easy way to search/filter, a clear and accurate layer system, draw lines, look for patterns, research and learn about these sites… nothing too chaotic and full of hundreds of buttons." That is now the written mission of the app.

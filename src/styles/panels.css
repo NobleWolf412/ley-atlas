@@ -775,3 +775,8 @@
   border-top: 1px solid var(--line2);
   padding-top: 8px;
 }
+/* Find alignments */
+.al-row.on {
+  background: var(--accent-soft);
+  border-radius: 8px;
+}

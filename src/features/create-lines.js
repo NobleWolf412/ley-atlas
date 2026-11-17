@@ -97,6 +97,7 @@ export function v2ApplyEnds(ends, name, global = false) {
     toast('Choose two distinct points that are not exactly opposite each other');
     return false;
   }
+  if (name) offerToSave(S.work, name); // a named line (from the alignment finder) replacing another
   S.work = {
     name: name || `Line ${S.userLines.length + 1}`,
     o: [...a],
@@ -178,6 +179,7 @@ export function v2DrawBearing() {
   if (revealPoint(F)) {
     /* switched its type back on */
   }
+  if (S.work && !S.work.name.startsWith(`${F.n} @ `)) offerToSave(S.work, '');
   S.work = {
     name: `${F.n} @ ${+brg.toFixed(2)}°`,
     o: [F.lat, F.lon],

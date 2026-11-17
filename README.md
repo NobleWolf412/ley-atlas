@@ -15,6 +15,7 @@ Built by Matt and Summer. Mainly used in Chrome on Android.
 - Fly the line: a 3D flight along any line over satellite imagery and terrain, ending on "is it unusual?"
 - Sun and moon: does a line point at a solstice, equinox or lunar standstill, for any era back to 3000 BC, with the odds of that happening by chance
 - About this place: a short Wikipedia introduction on each site's card (needs a connection)
+- Find alignments: straight lines through 4 or more of the sites in view, with a one-line luck check
 - Along the line: a strip view of ground height, magnetic signal and every finding from A to B
 - Line match: ranks every possible point B for a chosen point A against the 30 directions beside it, with a fair p-value that allows for picking the best one
 
