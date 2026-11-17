@@ -152,7 +152,7 @@ export function parseImport(text) {
     url: find('url'),
     reg: find('reg'),
   };
-  if (map.lat < 0 && map.coords < 0) {
+  if (body.length && map.lat < 0 && map.coords < 0) {
     const numeric = headers.map((_, i) =>
       body.slice(0, 20).every(r => r[i] !== undefined && r[i].trim() !== '' && isFinite(+r[i])),
     );

@@ -65,6 +65,11 @@ const paste = text => {
   document.querySelector('#im-parse').click();
 };
 describe('guided import flow', () => {
+  it('treats a single place with a comma qualifier as a name, not an empty table', () => {
+    paste('Delphi, Greece');
+    expect(document.querySelector('#modaltitle').textContent).toBe('Review sites');
+    expect(document.querySelector('[data-import-choice="0"]').options.length).toBeGreaterThan(1);
+  });
   it('previews valid polar coordinates without invalid SVG positions', () => {
     paste('North pole (90.0, 0.0)');
     expect(document.querySelector('.import-preview-map').outerHTML).not.toMatch(/NaN|Infinity/);
