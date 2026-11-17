@@ -1,5 +1,12 @@
 # Ley Atlas changelog
 
+## Unreleased: Guided site import
+
+- Paste place names, copied lists or coordinates and choose **Find sites**. Review atlas matches, choose between namesakes, correct missing locations with coordinates or a map pin, then import only selected sites.
+- Matching and the preview map work offline. Uncertain names are not assigned invented coordinates; pasted lists stay on the device.
+- Existing atlas matches become collection memberships without duplicate map points or inflated site counts. New locations retain their coordinate source and original pasted label in local saves and backups.
+- CSV, TSV and GeoJSON file uploads and column mapping remain available. Headerless tables keep their first named row; malformed geometry reports an import error or skipped row.
+
 ## Unreleased: Research Library
 
 - Explore now contains Research Collections: featured/all/saved views, search and filters, source-aware site profiles, and Overview / Sites / Geometry / Analysis / Sources tabs.

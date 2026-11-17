@@ -23,8 +23,23 @@ export let ALLP = [],
   FORTS = [];
 export function rebuildPoints() {
   ALLP = BASE.slice();
+  const positions = new Map(ALLP.map((p, index) => [p.id, index]));
   for (const im of S.imports)
-    for (const r of im.rows)
+    for (const r of im.rows) {
+      const existingIndex = r.matchedSiteId ? positions.get(r.matchedSiteId) : undefined;
+      if (
+        existingIndex !== undefined &&
+        r.coordinateSource === 'Atlas match' &&
+        GEO.dist(ALLP[existingIndex].lat, ALLP[existingIndex].lon, r.lat, r.lon) < 0.01
+      ) {
+        const existing = ALLP[existingIndex];
+        ALLP[existingIndex] = {
+          ...existing,
+          importIds: [...new Set([...(existing.importIds || []), im.id])],
+        };
+        continue;
+      }
+      positions.set(r.id, ALLP.length);
       ALLP.push({
         id: r.id,
         n: r.n,
@@ -39,7 +54,9 @@ export function rebuildPoints() {
         use: r.note || '',
         srcLabel: 'Imported from ' + im.name,
         srcUrl: r.url || null,
+        coordinateSource: r.coordinateSource || null,
       });
+    }
   for (const m of S.markers) ALLP.push({ ...m, cat: 'marker', set: 'marker', cls: 'user', unc: m.unc || 0 });
   for (const p of ALLP) if (!Array.isArray(p.v)) p.v = GEO.vec(p.lat, p.lon);
   PT = new Map(ALLP.map(p => [p.id, p]));
@@ -55,6 +72,7 @@ export function rebuildPoints() {
 }
 export const findPoint = id => PT.get(id);
 export function srcOn(p) {
+  if (p.importIds?.some(id => S.imports.some(im => im.id === id && im.on))) return true;
   if (p.set === 'import') {
     const im = S.imports.find(i => i.id === p.imp);
     return !!(im && im.on);
