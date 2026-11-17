@@ -26,7 +26,8 @@ import { openLinePicker } from './picker.js';
 import { activeLine } from '../domain/lines.js';
 import { startFollow } from '../features/follow-line.js';
 import { confirmBox, csv, geojson, stateCode } from '../panels/data-pane.js';
-import { changed, setSheet } from './sheet.js';
+import { changed, keepScroll, setSheet } from './sheet.js';
+import { renderLayers } from '../panels/layers-pane.js';
 import { $ } from '../core/util.js';
 import { setActive } from '../panels/lines-pane.js';
 import { v2LineChanged } from '../features/discovery.js';
@@ -147,6 +148,8 @@ export function v2HandleAction(action, id) {
       for (const k of Object.keys(S.under)) S.under[k] = false;
       v2Persist();
       v2Render();
+      // Hosted panes bypass v2Render's panel refresh: update their switches and counts explicitly.
+      keepScroll('#p-layers', () => renderLayers());
       renderKey();
       req();
       break;
