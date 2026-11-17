@@ -17,6 +17,16 @@ const actions = new Map();
 export function registerScreen(id, render, opts = {}) {
   screens.set(id, { render, ...opts });
 }
+
+export function screenHistory(id) {
+  return screens.get(id)?.history === true;
+}
+export function captureScreen(id) {
+  return screens.get(id)?.capture?.() || null;
+}
+export function restoreScreen(id, state) {
+  screens.get(id)?.restore?.(state);
+}
 export function screenHtml(id) {
   const sc = screens.get(id);
   if (!sc) throw new Error(`No screen registered for "${id}"`);

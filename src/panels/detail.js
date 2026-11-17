@@ -20,6 +20,8 @@ import { changed, selectTab, setSheet } from '../ui/sheet.js';
 
 // ================= SITES pane =================
 // ================= DETAIL =================
+import { researchSiteLinks } from '../features/research-library.js';
+
 export function showDetail(silent) {
   if (!S.sel) return;
   if (S.sel.type === 'dep') {
@@ -79,6 +81,7 @@ export function showDetail(silent) {
       ${x && x.a ? `<dt>Area</dt><dd>${x.a} ha</dd>` : ''}
       ${s.use ? `<dt>Notes</dt><dd class="t">${esc(s.use)}</dd>` : ''}
     </dl>
+    ${researchSiteLinks(s)}
     ${s.fort ? fortNote(s) : ''}
     ${s.stone ? stoneBlock(s.stone) : ''}
     <div id="d-ug"><h2>What’s underground nearby</h2><p class="small">Looking up deposits…</p></div>

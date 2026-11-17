@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run validate:research && vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "validate:research": "node scripts/validate-research.mjs",
     "test:watch": "vitest",
     "lint": "eslint .",
     "format": "prettier --write .",

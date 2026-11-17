@@ -16,7 +16,13 @@ import { setBanner, setMode } from './modes.js';
 import { rebuildPoints } from '../domain/points.js';
 import { on } from '../core/events.js';
 
+const mapTapHandlers = [];
+export function registerMapTapHandler(handler) {
+  mapTapHandlers.push(handler);
+}
+
 function onTap(x, y) {
+  if (!S.mode && mapTapHandlers.some(handler => handler(x, y))) return;
   const g = proj().invert([x, y]);
   if (S.mode && g && isFinite(g[0])) {
     modePoint([g[1], g[0]]);

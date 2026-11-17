@@ -44,6 +44,7 @@ import { initFlyLine } from './features/fly-line.js';
 import { initSkyCheck } from './features/sky-check.js';
 import { initAlignments } from './features/alignments.js';
 import { initAnalyze } from './ui/screens/analyze.js';
+import { initResearchLibrary } from './features/research-library.js';
 
 export function startApp() {
   initUtil();
@@ -77,6 +78,7 @@ export function startApp() {
   initSkyCheck();
   initAlignments();
   initAnalyze();
+  initResearchLibrary();
   initPanels();
   initEvents();
   initSwipeDelete();
