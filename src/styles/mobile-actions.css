@@ -9,6 +9,7 @@
     right: max(12px, env(safe-area-inset-right, 0px));
     max-width: none;
     display: flex;
+    justify-content: flex-end;
     gap: 8px;
     padding: 4px;
     overflow: visible;
@@ -19,15 +20,18 @@
     font-size: 13px;
   }
   #v2-menu {
+    order: 1;
     width: 52px;
   }
   #v2-search {
     flex: 1;
     min-width: 0;
+    max-width: 230px;
   }
   #v2-draw {
     flex: 1;
     min-width: 0;
+    max-width: 230px;
     white-space: normal;
   }
   /* Leave scrollable content above the fixed controls, including full sheets. */

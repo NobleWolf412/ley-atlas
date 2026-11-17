@@ -1,5 +1,9 @@
 # Ley Atlas changelog
 
+## Unreleased: Bottom-right phone controls
+
+- Menu now sits in the bottom-right corner on phones, with a compact Search sites button immediately to its left.
+
 ## Unreleased: Phone navigation within reach
 
 - Menu and Search sites now stay at the bottom on phones, in portrait and landscape, with larger touch targets and space for the device’s home indicator.
