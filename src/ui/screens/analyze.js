@@ -88,7 +88,7 @@ export function v2Analyze() {
   const precise =
     (L.sigma ? precisionBlock(L) : '') +
     (anchorsRows
-      ? `<h2>How far each anchor is from the line</h2><div class="tblwrap"><table class="tbl"><tr><th>Anchor</th><th style="text-align:right">Off-line</th></tr>${anchorsRows}</table></div><p class="small">Anchors are not snapped to the line. L / R = left / right of the direction of travel.</p>`
+      ? `<h2>Anchor offsets</h2><div class="tblwrap"><table class="tbl"><tr><th>Anchor</th><th style="text-align:right">Off-line</th></tr>${anchorsRows}</table></div><p class="small">Anchors are not snapped to the line. L / R = left / right of the direction of travel.</p>`
       : '');
   const siteRows = d.sites
     .slice(0, V2.allSites ? 400 : 14)
@@ -122,8 +122,8 @@ export function v2Analyze() {
       <p class="v2-muted" style="margin:0 0 6px">${lenTxt} · heading ${sg.brg.toFixed(1)}°</p>
       <p class="v2-glance"><b>Within ±${fmtKm(d.w)}:</b> ${crosses}</p>
       <p class="v2-glance"><span class="v2-glowkey" style="background:${glowColor(d.kind) || 'var(--line)'}"></span><b>Stands out:</b> ${esc(KINDTXT[d.kind])}${strong ? ` · strong magnetic signal (${mg.max.v > 0 ? '+' : ''}${Math.round(mg.max.v)} nT)` : ''}</p>
-      <p class="v2-glance"><b>Is that unusual?</b> A long line always passes things. Run the test to compare it with random lines.</p>
-      <div class="v2-actions">${v2Button('tool-lab', 'Is it unusual?', 'primary')}${v2Button('fly', 'Fly it in 3D')}${v2Button('follow', '▶ Follow the line')}${v2Button('choose-line', 'Change line')}</div></div>` +
+      <p class="v2-glance"><b>Comparison</b> A long line always passes things. Run the test to compare it with random lines.</p>
+      <div class="v2-actions">${v2Button('tool-lab', 'Compare with chance', 'primary')}${v2Button('fly', 'Fly line')}${v2Button('follow', 'Follow line')}${v2Button('choose-line', 'Change line')}</div></div>` +
     `<div class="v2-kicker" style="margin:14px 0 2px">The details</div>` +
     sec(
       'sites',

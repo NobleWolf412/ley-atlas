@@ -1,0 +1,520 @@
+/* Atlas workspace: paper, ink, generous rhythm, and a quiet evergreen accent. */
+:root[data-theme='light'] {
+  --panel: #fcfbf7;
+  --panel2: #f1f0e9;
+  --raise: #ffffff;
+  --line: #d4d9ce;
+  --line2: #e6e9df;
+  --text: #23342f;
+  --muted: #56665e;
+  --accent: #245e50;
+  --accent-ink: #ffffff;
+  --accent-soft: #e9f0e9;
+  --accent-line: #98b7a6;
+  --shadow: 0 8px 32px #23342f16;
+}
+:root[data-theme='dark'] {
+  --accent: #bad5b4;
+  --accent-ink: #15241d;
+  --accent-soft: #bad5b414;
+  --accent-line: #bad5b465;
+}
+button,
+input,
+select,
+textarea {
+  font-family: var(--f-body);
+}
+button,
+a,
+input,
+select,
+textarea,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+:where(button, a, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+button {
+  touch-action: manipulation;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+#app {
+  background: var(--panel2);
+}
+#sheet {
+  overflow: hidden;
+}
+#v2tools {
+  padding: 18px 22px;
+  gap: 12px;
+  min-height: 72px;
+  box-sizing: border-box;
+  background: var(--panel);
+}
+#v2hosttitle {
+  margin: 0;
+  flex: 1;
+  font: 500 24px var(--f-display);
+  letter-spacing: -0.04em;
+}
+#v2hosttitle:focus {
+  outline: none;
+}
+#v2tools button {
+  min-height: 44px;
+}
+#v2tools .v2-hostback {
+  background: transparent;
+  border: 0;
+  padding: 8px 0;
+  font-weight: 550;
+  color: var(--muted);
+}
+#v2tools .atlas-close {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  border-color: var(--line2);
+  background: var(--panel2);
+  font-size: 15px;
+}
+#v2panel,
+.pane {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+#v2panel,
+#app .pane {
+  padding: 24px 24px 32px;
+}
+.atlas-heading {
+  margin: 4px 0 26px;
+}
+.atlas-eyebrow {
+  display: block;
+  color: var(--accent);
+  font: 600 10px var(--f-mono);
+  letter-spacing: 0.14em;
+  line-height: 1.6;
+}
+#v2panel .atlas-heading h2,
+.atlas-heading h2 {
+  font: 400 38px/1.1 var(--f-display);
+  letter-spacing: -0.045em;
+  margin: 10px 0;
+}
+.atlas-heading p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+.atlas-navigation {
+  display: grid;
+  gap: 4px;
+}
+.v2-menurow {
+  padding: 18px 10px;
+  gap: 16px;
+  border-bottom: 1px solid var(--line2);
+  border-radius: 12px;
+  transition:
+    background 0.16s,
+    transform 0.16s;
+}
+.v2-menurow:hover {
+  background: var(--accent-soft);
+}
+.v2-menurow:active {
+  transform: translateY(1px);
+}
+.v2-menurow .ic {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line2);
+  background: var(--panel2);
+  border-radius: 14px;
+}
+.v2-menurow strong {
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+.v2-menurow small {
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.45;
+}
+.atlas-arrow {
+  color: var(--muted);
+  font-size: 19px;
+}
+.atlas-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  margin-top: 32px;
+  padding-top: 18px;
+  font: 500 10px var(--f-mono);
+  color: var(--muted);
+  letter-spacing: 0.12em;
+}
+.atlas-footnote {
+  font: italic 15px var(--f-display);
+  color: var(--muted);
+  margin: 28px 10px;
+}
+.v2-card {
+  border-radius: 16px;
+  padding: 18px;
+  margin: 0 0 14px;
+  box-shadow: none;
+}
+.v2-card.accent {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+.v2-card h3 {
+  margin: 8px 0;
+}
+.v2-actions {
+  gap: 8px;
+}
+.v2-action,
+.btn {
+  border-radius: 10px;
+  min-height: 44px;
+  line-height: 1.4;
+}
+.v2-action.primary,
+.btn.primary {
+  box-shadow: 0 3px 9px #163a2817;
+}
+.small,
+.v2-sub,
+.lede {
+  line-height: 1.65;
+}
+.v2-action,
+.btn,
+.seg button {
+  font-size: 13px;
+}
+.seg button,
+.chips button,
+.v2-chip {
+  min-height: 40px;
+}
+.atlas-segments {
+  display: flex;
+  padding: 4px;
+  gap: 3px;
+  border-radius: 13px;
+  background: var(--panel2);
+  margin: 0 0 22px;
+}
+.atlas-segments button {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  padding: 8px 4px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.atlas-segments button[aria-current='page'] {
+  color: var(--text);
+  background: var(--raise);
+  border-color: var(--line2);
+  box-shadow: 0 2px 4px #23342f08;
+}
+.v2-swipe-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.atlas-swipe-content {
+  flex: 1;
+  min-width: 0;
+}
+.atlas-remove {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 22px;
+  cursor: pointer;
+}
+.atlas-remove:hover {
+  color: var(--red);
+  background: var(--panel2);
+}
+.atlas-export-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.atlas-export-list button {
+  text-align: left;
+  justify-content: flex-start;
+}
+#p-layers .grp,
+#p-appearance .grp,
+#resource-sources .grp {
+  border: 1px solid var(--line2);
+  background: var(--raise);
+  border-radius: 16px;
+  margin: 0 0 12px;
+  overflow: hidden;
+}
+.grp > summary {
+  min-height: 54px;
+  box-sizing: border-box;
+  padding: 18px 16px;
+  font-size: 15px;
+}
+.grp .body {
+  padding: 6px 16px 16px;
+}
+.grp .cnt {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+.lg {
+  padding: 13px 0;
+  gap: 12px;
+  min-height: 58px;
+  box-sizing: border-box;
+}
+.lg .t {
+  min-width: 0;
+}
+.lg .t b {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.lg .t span {
+  font-size: 11px;
+  line-height: 1.55;
+  margin-top: 4px;
+}
+.lg.off {
+  opacity: 1;
+}
+.lg.off .t {
+  color: var(--muted);
+}
+.tog {
+  flex-shrink: 0;
+  position: relative;
+}
+.tog::before {
+  content: '';
+  position: absolute;
+  inset: -10px -4px;
+}
+.v2-sec {
+  border-radius: 16px;
+  margin: 0 0 12px;
+}
+.v2-sec > summary {
+  min-height: 50px;
+  padding: 16px;
+  font-size: 14px;
+}
+#p-lab > .v2-sec[open] {
+  padding: 0 16px 18px;
+}
+#p-lab > .v2-sec[open] > summary {
+  margin: 0 -16px 12px;
+  border-bottom: 1px solid var(--line2);
+}
+#app:not(.v2-advanced) .brand {
+  border-radius: 16px;
+  padding: 13px 18px 13px 48px;
+  box-shadow: var(--shadow);
+  background: var(--overlay);
+  position: relative;
+}
+.brand::before {
+  content: '✧';
+  position: absolute;
+  left: 16px;
+  top: 12px;
+  font-size: 28px;
+  color: var(--accent);
+}
+#app:not(.v2-advanced) .brand h1 {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+#app:not(.v2-advanced) .brand p {
+  font-size: 8px;
+  margin-top: 4px;
+}
+#v2bar {
+  top: 100px;
+  gap: 8px;
+}
+.v2-mapbtn {
+  min-height: 46px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+#v2-menu {
+  width: 46px;
+  padding: 0;
+}
+#v2-menu[aria-expanded='true'] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+#app:not(.v2-advanced) .fab {
+  top: 100px;
+  gap: 8px;
+}
+#app:not(.v2-advanced) .fab .iconbtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+}
+#app:not(.v2-advanced) #themebtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+}
+#app:not(.v2-advanced) .topbar .seg button {
+  min-height: 40px;
+}
+#v2cta {
+  min-height: 52px;
+  padding: 16px 28px;
+  font-size: 14px;
+  box-shadow: 0 6px 24px #183e4230;
+}
+input[type='text'],
+input[type='search'],
+select,
+textarea {
+  border-radius: 10px;
+  min-height: 44px;
+  box-sizing: border-box;
+}
+@media (min-width: 1101px) and (min-height: 651px) {
+  #app:not(.v2-advanced) #sheet {
+    width: 440px;
+    min-width: 440px;
+    height: calc(100% - 32px);
+    margin: 16px 16px 16px 0;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+  }
+}
+@media (max-width: 1100px), (max-height: 650px) {
+  #sheet {
+    border-radius: 24px 24px 0 0;
+  }
+  #v2tools {
+    padding: 8px 20px 14px;
+    min-height: 62px;
+  }
+  #v2panel,
+  #app .pane {
+    padding: 20px 20px max(28px, env(safe-area-inset-bottom));
+  }
+  .atlas-heading {
+    margin-bottom: 16px;
+  }
+  #v2panel .atlas-heading h2 {
+    font-size: 32px;
+  }
+  .v2-menurow {
+    padding: 14px 8px;
+    gap: 12px;
+  }
+  .atlas-footer {
+    margin-top: 20px;
+  }
+  #sheet:not(.peek):not(.full) {
+    height: 56dvh !important;
+    --sheet-h: 56dvh;
+  }
+  #app.atlas-menu #sheet:not(.peek):not(.full) {
+    height: 72dvh !important;
+    --sheet-h: 72dvh;
+  }
+  #sheet.full {
+    height: 90dvh !important;
+    --sheet-h: 90dvh;
+  }
+}
+@media (max-width: 420px) {
+  #app:not(.v2-advanced) .brand {
+    padding: 10px 12px 10px 38px;
+  }
+  .brand::before {
+    left: 11px;
+    top: 10px;
+    font-size: 24px;
+  }
+  #app:not(.v2-advanced) .brand h1 {
+    font-size: 18px;
+  }
+  #app:not(.v2-advanced) .brand p {
+    letter-spacing: 0.04em;
+    font-size: 7px;
+  }
+  #v2bar {
+    top: 90px;
+  }
+  #app:not(.v2-advanced) .fab {
+    top: 90px;
+  }
+  .v2-searchbtn {
+    min-width: min(230px, calc(100vw - 140px));
+  }
+}
+@media (orientation: landscape) and (max-height: 520px) and (min-width: 600px) {
+  #sheet {
+    border-radius: 20px 0 0 20px;
+  }
+  #sheet:not(.peek):not(.full),
+  #app.atlas-menu #sheet:not(.peek):not(.full),
+  #sheet.full {
+    height: 100% !important;
+  }
+  #v2tools {
+    padding: 10px 16px;
+  }
+  #v2bar,
+  #app:not(.v2-advanced) .fab {
+    top: 88px;
+  }
+  .atlas-heading {
+    margin-top: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+  }
+}

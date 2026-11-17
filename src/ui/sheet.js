@@ -4,6 +4,8 @@ import { toast } from './intro.js';
 import { $, $$ } from '../core/util.js';
 import { analyse } from '../domain/analysis.js';
 import { buildLines } from '../domain/lines.js';
+import { renderLayers, renderAppearance } from '../panels/layers-pane.js';
+import { renderMapTools } from '../features/random-test.js';
 import { renderLab } from '../features/random-test.js';
 import { req } from '../map/draw.js';
 import { renderData } from '../panels/data-pane.js';
@@ -35,7 +37,13 @@ export function selectTab(t) {
 }
 export function renderTab(t) {
   if (!v2HostOpen()) return;
-  ({ lab: renderLab, data: renderData })[t]?.();
+  ({
+    lab: renderLab,
+    data: renderData,
+    layers: renderLayers,
+    appearance: renderAppearance,
+    tools: renderMapTools,
+  })[t]?.();
 }
 // the Layers panel is drawn by v2Render
 function v2HostOpen() {

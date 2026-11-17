@@ -45,6 +45,8 @@ export function v2Persist() {
       V2KEY,
       JSON.stringify({
         opacity: V2.overlayOpacity,
+        layers: S.layers,
+        src: S.src,
         under: S.under,
         cat: S.layers.cat,
         active: S.active,
@@ -70,6 +72,10 @@ export function initPreferences() {
   try {
     const p = JSON.parse(localStorage.getItem(V2KEY) || 'null');
     if (p) {
+      if (p.layers)
+        for (const k of Object.keys(S.layers))
+          if (typeof S.layers[k] === 'boolean' && typeof p.layers[k] === 'boolean') S.layers[k] = p.layers[k];
+      if (p.src) for (const k of Object.keys(S.src)) if (typeof p.src[k] === 'boolean') S.src[k] = p.src[k];
       V2.overlayOpacity = Number.isFinite(p.opacity) ? Math.max(15, Math.min(100, p.opacity)) : 75;
       if (p.under)
         for (const k of Object.keys(S.under)) if (typeof p.under[k] === 'boolean') S.under[k] = p.under[k];

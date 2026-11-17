@@ -2,7 +2,7 @@
 import { runAction } from './registry.js';
 import { v2OpenHost } from './panels.js';
 import { v2Download } from './downloads.js';
-import { v2ChangeTab, v2Done, v2Render } from './panels.js';
+import { v2Back, v2ChangeTab, v2Done, v2Render } from './panels.js';
 import { v2OpenBrowser } from './site-lists.js';
 import { V2, v2Persist } from '../state/preferences.js';
 import {
@@ -26,7 +26,8 @@ import { openLinePicker } from './picker.js';
 import { activeLine } from '../domain/lines.js';
 import { startFollow } from '../features/follow-line.js';
 import { confirmBox, csv, geojson, stateCode } from '../panels/data-pane.js';
-import { changed, setSheet } from './sheet.js';
+import { changed, keepScroll, setSheet } from './sheet.js';
+import { renderLayers } from '../panels/layers-pane.js';
 import { $ } from '../core/util.js';
 import { setActive } from '../panels/lines-pane.js';
 import { v2LineChanged } from '../features/discovery.js';
@@ -71,10 +72,7 @@ export function v2HandleAction(action, id) {
       v2ChangeTab('saved');
       break;
     case 'menu-layers':
-      V2.tab = null;
-      V2.host = null;
-      V2.layersOpen = true;
-      v2Render();
+      v2OpenHost('layers');
       break;
     case 'site-line': {
       const id = S.sel?.id;
@@ -141,17 +139,17 @@ export function v2HandleAction(action, id) {
       v2ChangeTab('draw');
       break;
     case 'layers':
-      V2.layersOpen = !V2.layersOpen;
-      v2Render();
+      v2OpenHost('layers');
       break;
     case 'layers-close':
-      V2.layersOpen = false;
-      v2Render();
+      v2Back();
       break;
     case 'layers-clear':
       for (const k of Object.keys(S.under)) S.under[k] = false;
       v2Persist();
       v2Render();
+      // Hosted panes bypass v2Render's panel refresh: update their switches and counts explicitly.
+      keepScroll('#p-layers', () => renderLayers());
       renderKey();
       req();
       break;

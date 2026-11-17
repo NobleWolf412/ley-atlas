@@ -1,5 +1,16 @@
 # Ley Atlas changelog
 
+## 2.9 (16 Nov 2026): Atlas workspace
+
+- A unified menu: **My lines**, **Layers**, **Analyze**, **Resources**, and **Appearance**. The map still opens on its own.
+- **Resources** brings dataset switches, imported collections, CSV/GeoJSON imports, backups, GeoJSON/CSV/PNG exports, attribution, and methods into one place.
+- **Layers** contains only Sites, Underground, and Lines. **Appearance** holds theme, map styling, overlays, background map controls, and line style.
+- **Analyze** groups line details, chance comparisons, alignment searches, and map tools. Measure and markers have a dedicated screen; comparison panels show details on demand.
+- A new paper-and-evergreen interface with consistent icons, larger touch targets, responsive panels, keyboard focus, explicit delete buttons alongside swipe gestures, and reduced-motion support.
+- Dataset visibility and map styling now persist across reloads alongside the existing preferences.
+- Backups retain imported collections over 3,000 rows; previously they were silently omitted. Restore closes its host panel correctly.
+- Regression coverage uses the real datasets for Stonehenge → Bourtange: **648 km, 1 mineral deposit, 13 historic sites**. Dataset integrity and existing algorithm tests remain in place.
+
 ## 2.8 (16 Nov 2026): Find alignments
 
 The "spot patterns" job from the mission, which had nothing built for it.

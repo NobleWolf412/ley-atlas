@@ -187,7 +187,7 @@ function finish() {
     <p class="fly-sum">${esc(F.summary)}</p>
     <p>That is what lies within ±${fmtKm(S.corridorKm)} of it. A line this long through country this busy will always pass things, so the count alone proves nothing. The test compares this line with hundreds of others like it.</p>
     <div class="fly-actions">
-      <button class="fly-cta" data-fly="test">Is it unusual? Run the test</button>
+      <button class="fly-cta" data-fly="test">Compare with chance</button>
       <button class="fly-ghost" data-fly="again">Fly again</button>
       <button class="fly-ghost" data-fly="close">Close</button>
     </div>`;

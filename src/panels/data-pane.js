@@ -1,6 +1,6 @@
 // Saved data, export and Wikidata import
 import { GEO } from '../core/geo.js';
-import { $, esc, nf } from '../core/util.js';
+import { $, $$, esc, nf } from '../core/util.js';
 import { CLASSES, SITES } from '../data/catalog.js';
 import {
   CASTLES,
@@ -15,7 +15,7 @@ import {
   WONDERS,
 } from '../data/datasets.js';
 import { MATCH } from '../domain/analysis.js';
-import { LINES, lineShown } from '../domain/lines.js';
+import { LINES, activeLine, lineShown } from '../domain/lines.js';
 import { ALLP, rebuildPoints } from '../domain/points.js';
 import { SOURCES, TYPENAME } from '../domain/site-types.js';
 import { openImport } from '../features/import.js';
@@ -24,7 +24,11 @@ import { S, modForts, persistImports, stripF } from '../state/state.js';
 import { toast } from '../ui/intro.js';
 import { changed } from '../ui/sheet.js';
 
-// ================= DATA pane =================
+import { renderLayers } from './layers-pane.js';
+import { v2Button } from '../ui/panel-parts.js';
+
+let RESOURCE_TAB = 'datasets';
+// Resources: dataset controls, imports, exports and reference material.
 export function renderData() {
   const counts = { wiki: 0, unesco: 0, src: 0, given: 0, ref: 0 };
   for (const s of SITES) counts[s.given ? 'given' : s.v || 'ref']++;
@@ -62,17 +66,20 @@ export function renderData() {
       'World crustal magnetic field from NOAA’s Enhanced Magnetic Model (EMM2017), land and sea, about 25 km detail. Britain keeps its 2 km survey.',
     ],
   ];
-  $('#p-data').innerHTML = `
-  <h2>Import your own sites</h2>
-  <p class="small">A CSV or GeoJSON of locations. Rows are sorted into site types, so imported forts appear under Star forts.</p>
-  <button class="btn primary" id="e-import" style="margin-top:8px">+ Import CSV / GeoJSON</button>
-  ${S.imports.length ? `<p class="small" style="margin-top:6px">${S.imports.length} import${S.imports.length > 1 ? 's' : ''} loaded: ${S.imports.map(i => esc(i.name) + ' (' + i.rows.length + ')').join(', ')}. Manage them in Layers → Data sources.</p>` : ''}
-  <h2>Get more sites from Wikidata</h2>
-  <p class="small">I couldn’t reach Wikidata from here, so these open a ready-made search on Wikidata’s own site. Press <b>Run</b> (▶), then <b>Download → CSV</b>, then import that file above. Each list brings its own type, so it lands under the right switch.</p>
-  <div class="wrap" style="margin-top:8px">${WD_QUERIES.map(([k, t]) => `<a class="btn" target="_blank" rel="noopener" href="${wdUrl(k)}">${esc(t)} ↗</a>`).join('')}</div>
-  <h2>Research to-do</h2>
-  <div class="todo">${todo.map(([st, t, d]) => `<div class="td ${st}"><i aria-hidden="true">${st === 'done' ? '✓' : st === 'part' ? '◐' : '○'}</i><div><b>${esc(t)}</b><span>${esc(d)}</span></div></div>`).join('')}</div>
-  <h2>Where the data comes from</h2>
+  const tabs = [
+    ['datasets', 'Datasets'],
+    ['import', 'Import'],
+    ['export', 'Export'],
+    ['reference', 'Reference'],
+  ];
+  $('#p-data').innerHTML =
+    `<nav class="atlas-segments" aria-label="Resources">${tabs.map(([key, title]) => `<button data-resource-view="${key}" aria-current="${RESOURCE_TAB === key ? 'page' : 'false'}">${title}</button>`).join('')}</nav>
+  ${RESOURCE_TAB === 'datasets' ? '<div id="resource-sources"></div>' : ''}
+  ${RESOURCE_TAB === 'import' ? `<div class="atlas-heading"><span class="atlas-eyebrow">YOUR COLLECTION</span><h2>Import sites</h2><p>CSV, TSV or GeoJSON.</p></div><button class="btn primary block" id="e-import">Import sites</button><p class="small">Imported sites appear in Datasets and follow the site types in Layers.</p><div class="v2-card"><h2>Wikidata</h2><p class="small">Open a query, select Run, then Download → CSV. Import the downloaded file here.</p><div class="wrap">${WD_QUERIES.map(([k, t]) => `<a class="btn" target="_blank" rel="noopener" href="${wdUrl(k)}">${esc(t)} ↗</a>`).join('')}</div></div>` : ''}
+  ${RESOURCE_TAB === 'export' ? `<div class="v2-card"><h2>Backup</h2><p class="small">Lines, markers, imported sites and map settings. Saved to a file on your device.</p><div class="v2-actions">${v2Button('export-backup', 'Save backup', 'primary')}${v2Button('import-backup', 'Restore backup')}</div></div><div class="v2-card"><h2>Export</h2><div class="atlas-export-list">${v2Button('export-geo', 'Lines · GeoJSON')}${v2Button('export-csv', 'Sites along line · CSV')}${v2Button('export-png', 'Map · PNG')}</div>${!activeLine() ? '<p class="small">Open a line to export its sites.</p>' : ''}</div>` : ''}
+  ${
+    RESOURCE_TAB === 'reference'
+      ? `  <h2>Attribution</h2>
   <div class="tblwrap"><table class="tbl">
     <tr><th>List</th><th style="text-align:right">Sites</th><th>Coordinates from</th></tr>
     <tr><td>Project sites</td><td class="n">${SITES.length}</td><td class="small">${counts.given} your anchors · ${counts.wiki} checked against Wikipedia · ${counts.unesco} agree with UNESCO · ${counts.ref} reference values</td></tr>
@@ -93,8 +100,21 @@ export function renderData() {
   </table></div>
   <h2>Method</h2>
   <p class="lede">Lines are great circles on a sphere of the WGS84 mean radius (6,371.0088 km); ellipsoidal geodesics differ by under 0.5%. Off-line distances are cross-track distances. Each fort with a traced outline is drawn at the outline's centroid.</p>
-  <p class="lede">Proximity is not evidence of energy transmission, global planning or a shared civilisation. Ore bodies do not give off energy by themselves. Magnetite-rich rock does bend the local magnetic field (sometimes enough to swing a compass), which is what the British magnetic survey measures, and metal ores conduct electricity better than the rock around them, which geologists use to find them by sending a current into the ground. The Test tab shows how often ordinary lines do just as well.</p>`;
-  $('#e-import').onclick = openImport;
+  <p class="lede">Proximity is not evidence of energy transmission, global planning or a shared civilisation. Ore bodies do not give off energy by themselves. Magnetite-rich rock does bend the local magnetic field (sometimes enough to swing a compass), which is what the British magnetic survey measures, and metal ores conduct electricity better than the rock around them, which geologists use to find them by sending a current into the ground. Analyze shows how often ordinary lines do just as well.</p><details class="v2-sec"><summary>Research notes</summary>  <div class="todo">${todo.map(([st, t, d]) => `<div class="td ${st}"><i aria-hidden="true">${st === 'done' ? '✓' : st === 'part' ? '◐' : '○'}</i><div><b>${esc(t)}</b><span>${esc(d)}</span></div></div>`).join('')}</div>
+</details>`
+      : ''
+  }`;
+  if (RESOURCE_TAB === 'datasets') renderLayers('sources', '#resource-sources');
+  if ($('#e-import')) $('#e-import').onclick = openImport;
+  $$('#p-data [data-resource-view]').forEach(
+    b =>
+      (b.onclick = () => {
+        RESOURCE_TAB = b.dataset.resourceView;
+        renderData();
+        $('#p-data').scrollTop = 0;
+        $('#p-data [aria-current="page"]').focus({ preventScroll: true });
+      }),
+  );
 }
 const WD_QUERIES = [
   ['Q2977', 'Cathedrals', 'cathedral', 5],
@@ -212,7 +232,6 @@ export function csv() {
   return rows.map(r => r.map(q).join(',')).join('\n');
 }
 export function stateCode() {
-  const imRows = S.imports.reduce((a, i) => a + i.rows.length, 0);
   const body = {
     v: 3,
     view: S.view,
@@ -227,7 +246,7 @@ export function stateCode() {
     userLines: S.userLines.map(stripF),
     work: stripF(S.work),
     markers: S.markers,
-    imports: imRows <= 3000 ? S.imports : [],
+    imports: S.imports,
   };
   return btoa(unescape(encodeURIComponent(JSON.stringify(body))));
 }

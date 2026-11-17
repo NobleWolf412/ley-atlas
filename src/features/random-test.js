@@ -58,21 +58,12 @@ function depPool(g) {
       });
   return (DEPPOOL[g] = out);
 }
+const LAB_OPEN = { site: false, line: true, crossings: false };
 export function renderLab() {
-  const L = activeLine(),
-    ms = S.measure;
-  let mres = '';
-  if (ms.length >= 2) {
-    const d1 = GEO.dist(...ms[0], ...ms[1]),
-      b1 = GEO.bearing(...ms[0], ...ms[1]);
-    mres = `<dt>A → B</dt><dd>${fmtKm(d1)} at ${b1.toFixed(2)}°</dd>`;
-    if (ms.length === 3) {
-      const d2 = GEO.dist(...ms[1], ...ms[2]),
-        ba = GEO.bearing(...ms[1], ...ms[0]),
-        bc = GEO.bearing(...ms[1], ...ms[2]);
-      mres += `<dt>B → C</dt><dd>${fmtKm(d2)} at ${bc.toFixed(2)}°</dd><dt>Angle at B</dt><dd>${Math.abs(wrap(bc - ba)).toFixed(2)}°</dd>`;
-    }
-  }
+  $$('#p-lab [data-lab-section]').forEach(d => {
+    LAB_OPEN[d.dataset.labSection] = d.open;
+  });
+  const L = activeLine();
   const vis = INTS.filter(x => !(S.hideTrivial && x.trivial)),
     mode = TEST?.mode || 'rotate',
     pools = POOLS();
@@ -92,9 +83,9 @@ export function renderLab() {
       ? 'Recorded mineral deposits. Counts are dominated by North America, where the records are most complete; a line through Europe crosses far fewer records.'
       : '');
   $('#p-lab').innerHTML = `
-  ${ugTestPanel()}
-  <h2>Is this line unusual?</h2>
-  <div class="notebar">${L ? lineSw(L, 24, 12) : ''}<span style="flex:1;min-width:0">${L ? `<b>${esc(L.short || L.name)}</b> · ±${fmtKm(S.corridorKm)}` : 'No line chosen yet. Connect two sites in Create, or pick one here.'}</span><button class="btn" id="t-line">${L ? 'Change' : 'Choose a line'}</button></div>
+  <details class="v2-sec" data-lab-section="site" ${LAB_OPEN.site ? 'open' : ''}><summary>Site comparison</summary>${ugTestPanel()}</details>
+  <details class="v2-sec" data-lab-section="line" ${LAB_OPEN.line ? 'open' : ''}><summary>Line comparison</summary>
+  <div class="notebar">${L ? lineSw(L, 24, 12) : ''}<span style="flex:1;min-width:0">${L ? `<b>${esc(L.short || L.name)}</b> · ±${fmtKm(S.corridorKm)}` : 'No line chosen yet. Draw a line between two sites, or pick one here.'}</span><button class="btn" id="t-line">${L ? 'Change' : 'Choose a line'}</button></div>
   <p class="lede">Counts sites inside the corridor, then repeats with 2,000 control lines to see how often an ordinary line does as well.</p>
   <label class="f">Sites to count<select id="t-pool">${pools.map(([k, n, arr]) => `<option value="${k}" ${k === S.control ? 'selected' : ''}>${esc(n)} (${nf(arr.length)})</option>`).join('')}</select></label>
   <p class="small" style="margin:6px 0 10px">${note}</p>
@@ -103,7 +94,7 @@ export function renderLab() {
   <p class="small" style="margin-top:6px">${mode === 'rotate' ? 'Keeps the start point fixed: the fair comparison for a line through a dense area.' : 'Random lines often cross empty ocean, which flatters any line through Europe.'}</p>
   <button class="btn primary block" id="t-run" style="margin-top:10px" ${L ? '' : 'disabled'}>Run test</button>
   <div id="t-out" style="margin-top:12px">${TEST && TEST.res ? testView(TEST.res) : ''}</div>
-  <h2>Line crossings</h2>
+  </details><details class="v2-sec" data-lab-section="crossings" ${LAB_OPEN.crossings ? 'open' : ''}><summary>Line crossings</summary>
   ${
     S.focus
       ? `<div class="notebar"><span style="flex:1">Crossings need more than one line on the map.</span><button class="btn" id="i-all">Show all lines</button></div>`
@@ -121,11 +112,7 @@ export function renderLab() {
       : '<p class="empty">No crossings among the lines switched on.</p>'
   }`
   }
-  <h2>Measure & mark</h2>
-  <div class="wrap"><button class="btn ${S.mode === 'measure' ? 'primary' : ''}" id="m-go">${S.mode === 'measure' ? 'Done measuring' : 'Measure distance / angle'}</button><button class="btn ${S.mode === 'marker' ? 'primary' : ''}" id="k-go">${S.mode === 'marker' ? 'Cancel' : 'Drop a marker'}</button></div>
-  ${mres ? `<dl class="kv" style="margin-top:10px">${mres}</dl>` : ''}
-  <label class="f" style="margin-top:10px">Marker name<input type="text" id="mk-name" placeholder="optional"></label>
-  <div class="row" style="margin-top:6px"><input type="text" id="mk-ll" placeholder="or type / paste coordinates"><button class="btn" id="mk-add">Add</button></div>`;
+</details>`;
   bindUgTest();
   $('#t-line').onclick = openLinePicker;
   $('#t-pool').onchange = e => {
@@ -162,6 +149,27 @@ export function renderLab() {
         showDetail();
       }),
   );
+}
+
+export function renderMapTools() {
+  const ms = S.measure;
+  let mres = '';
+  if (ms.length >= 2) {
+    const d1 = GEO.dist(...ms[0], ...ms[1]),
+      b1 = GEO.bearing(...ms[0], ...ms[1]);
+    mres = `<dt>A → B</dt><dd>${fmtKm(d1)} at ${b1.toFixed(2)}°</dd>`;
+    if (ms.length === 3) {
+      const d2 = GEO.dist(...ms[1], ...ms[2]),
+        ba = GEO.bearing(...ms[1], ...ms[0]),
+        bc = GEO.bearing(...ms[1], ...ms[2]);
+      mres += `<dt>B → C</dt><dd>${fmtKm(d2)} at ${bc.toFixed(2)}°</dd><dt>Angle at B</dt><dd>${Math.abs(wrap(bc - ba)).toFixed(2)}°</dd>`;
+    }
+  }
+  $('#p-tools').innerHTML = `  <h2>Measure & markers</h2>
+  <div class="wrap"><button class="btn ${S.mode === 'measure' ? 'primary' : ''}" id="m-go">${S.mode === 'measure' ? 'Done measuring' : 'Measure distance / angle'}</button><button class="btn ${S.mode === 'marker' ? 'primary' : ''}" id="k-go">${S.mode === 'marker' ? 'Cancel' : 'Drop a marker'}</button></div>
+  ${mres ? `<dl class="kv" style="margin-top:10px">${mres}</dl>` : ''}
+  <label class="f" style="margin-top:10px">Marker name<input type="text" id="mk-name" aria-label="Marker name" placeholder="optional"></label>
+  <div class="row" style="margin-top:6px"><input type="text" id="mk-ll" aria-label="Marker coordinates" placeholder="or type / paste coordinates"><button class="btn" id="mk-add">Add</button></div>`;
   $('#m-go').onclick = () => {
     if (S.mode === 'measure') setMode(null);
     else {
