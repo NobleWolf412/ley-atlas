@@ -1,5 +1,10 @@
 # Ley Atlas changelog
 
+## Unreleased: Phone navigation within reach
+
+- Menu and Search sites now stay at the bottom on phones, in portrait and landscape, with larger touch targets and space for the device’s home indicator.
+- Panels leave room for the controls, including when expanded. Draw a line and map information sit above them.
+
 ## Unreleased: Remove case studies
 
 - Layers → Lines now lets you remove a built-in case study, including both its line and best-fit model, from the map and line picker. Removal stays saved on this device and in backups.
