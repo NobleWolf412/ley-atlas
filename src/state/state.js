@@ -72,6 +72,7 @@ export const S = {
   hideTrivial: true,
   forts: {},
   userLines: [],
+  removedCaseStudies: [],
   work: null,
   markers: [],
   imports: [],
@@ -112,6 +113,7 @@ export function persist() {
         work: stripF(S.work),
         markers: S.markers,
         focus: S.focus,
+        removedCaseStudies: S.removedCaseStudies,
       }),
     );
   } catch (e) {}
@@ -131,6 +133,9 @@ export function initState() {
     if (d) {
       S.forts = d.forts || {};
       S.userLines = d.userLines || [];
+      S.removedCaseStudies = Array.isArray(d.removedCaseStudies)
+        ? d.removedCaseStudies.filter(id => typeof id === 'string')
+        : [];
       S.work = d.work || null;
       S.markers = d.markers || [];
       if (typeof d.focus === 'boolean') S.focus = d.focus;

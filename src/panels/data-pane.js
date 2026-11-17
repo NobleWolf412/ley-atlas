@@ -237,6 +237,7 @@ export function stateCode() {
   const body = {
     v: 4,
     researchNotebook: notebookSnapshot(),
+    removedCaseStudies: S.removedCaseStudies,
     view: S.view,
     cam: S.cam,
     layers: S.layers,
@@ -266,6 +267,8 @@ export function loadState(code) {
     userLines: d.userLines || [],
     markers: d.markers || [],
   });
+  if (Array.isArray(d.removedCaseStudies))
+    S.removedCaseStudies = d.removedCaseStudies.filter(id => typeof id === 'string');
   if (d.src) S.src = { ...S.src, ...d.src };
   if (d.under) S.under = { ...S.under, ...d.under };
   if (typeof d.focus === 'boolean') S.focus = d.focus;

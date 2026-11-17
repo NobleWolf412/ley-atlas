@@ -4,7 +4,8 @@ import { $, $$, esc, nf } from '../core/util.js';
 import { UNAVAILABLE } from '../data/catalog.js';
 import { MEGALITHS } from '../data/datasets.js';
 import { INTS } from '../domain/analysis.js';
-import { CS0, LINEBY, LINES, activeLine } from '../domain/lines.js';
+import { LINEBY, LINES, activeLine } from '../domain/lines.js';
+import { CASE_STUDIES } from '../domain/case-studies.js';
 import { ALLP, BASE, srcOn } from '../domain/points.js';
 import { SOURCES, TYPES } from '../domain/site-types.js';
 import { openImport } from '../features/import.js';
@@ -14,7 +15,7 @@ import { fmtKm } from '../core/format.js';
 import { setView } from '../map/interaction.js';
 import { tag } from './lines-pane.js';
 import { S, persistImports } from '../state/state.js';
-import { toast } from '../ui/intro.js';
+import { toast, toastUndo } from '../ui/intro.js';
 import { renderKey, setFocus } from '../ui/map-chrome.js';
 import { v2SwipeRow } from '../ui/panel-parts.js';
 import { v2DisplayOptionsHtml } from '../ui/screens/menu.js';
@@ -72,6 +73,7 @@ export function renderAppearance() {
     root.querySelector(`[${focusAttr.name}="${focusAttr.value}"]`)?.focus({ preventScroll: true });
 }
 export function renderLayers(view = 'layers', target = '#p-layers') {
+  $$(target + ' details[data-g]').forEach(d => (OPEN[d.dataset.g] = d.open));
   const row = (key, title, sub, cls, on, swk, disabled, attr = 'data-layer') =>
     `<div class="lg ${on ? '' : 'off'}">${sw(swk || key)}<div class="t"><b>${esc(title)}</b>${sub ? `<span>${sub}</span>` : ''}${cls ? tag(cls) : ''}</div><button class="tog" role="switch" aria-checked="${on}" aria-label="${esc(title)}" ${attr}="${key}" ${disabled ? 'disabled' : ''}></button></div>`;
   const L = activeLine(),
@@ -94,7 +96,12 @@ export function renderLayers(view = 'layers', target = '#p-layers') {
     'meridian',
     'viasacra',
   ];
-  const examplesOn = exampleKeys.filter(k => S.layers[k]).length;
+  const removedStudies = CASE_STUDIES.filter(c => S.removedCaseStudies.includes(c.id));
+  const studies = CASE_STUDIES.filter(c => !S.removedCaseStudies.includes(c.id));
+  const availableExamples = exampleKeys.filter(
+    k => !removedStudies.some(c => c.lineId === k || c.fitId === k),
+  );
+  const examplesOn = availableExamples.filter(k => S.layers[k]).length;
   const myLines = (S.work ? 1 : 0) + S.userLines.length;
   const sub = (id, title, cnt, body) =>
     `<details class="grp sub" data-g="${id}" ${OPEN[id] ? 'open' : ''}><summary>${esc(title)} <span class="cnt">${cnt}</span></summary><div class="body">${body}</div></details>`;
@@ -155,11 +162,17 @@ export function renderLayers(view = 'layers', target = '#p-layers') {
             sub(
               'examples',
               'Example and published lines',
-              `${examplesOn} of ${exampleKeys.length} on`,
+              `${examplesOn} of ${availableExamples.length} on`,
               `
-    <h3 class="sub">Case study: ${esc(CS0.title)}</h3>
-    ${row('primary', CS0.title + ' line', 'Obelisk → Castel Sant’Angelo, around the globe', 'projection', S.layers.primary)}
-    ${row('bestfit', 'Best fit through all three anchors', 'Least-squares great circle incl. St. Peter’s', 'projection', S.layers.bestfit)}
+    ${studies
+      .map(
+        c => `
+      <div class="notebar"><h3 class="sub" style="flex:1">Case study: ${esc(c.title)}</h3><button class="btn" data-remove-study="${esc(c.id)}" aria-label="Remove ${esc(c.title)} case study">Remove</button></div>
+      ${row(c.lineId, c.title + ' line', 'Obelisk → Castel Sant’Angelo, around the globe', 'projection', S.layers[c.lineId])}
+      ${row(c.fitId, 'Best fit through all three anchors', 'Least-squares great circle incl. St. Peter’s', 'projection', S.layers[c.fitId])}
+    `,
+      )
+      .join('')}
     <h3 class="sub">Published claims</h3>
     ${row('sword', 'Sword of Saint Michael', 'Six Michael sanctuaries, drawn as claimed', 'esoteric', S.layers.sword)}
     ${row('swordfit', 'Sword — best-fit circle', `Sites miss it by ${fmtKm(swf.rms)} on average`, 'projection', S.layers.swordfit)}
@@ -170,6 +183,7 @@ export function renderLayers(view = 'layers', target = '#p-layers') {
     <h3 class="sub">Documented</h3>
     ${row('meridian', 'Vatican Meridian', 'True north–south through the obelisk', 'alignment', S.layers.meridian)}
     ${row('viasacra', 'Via Sacra', 'Forum route, simplified trace', 'alignment', S.layers.viasacra)}
+    ${removedStudies.length ? `<details class="grp sub" data-g="removed-studies" ${OPEN['removed-studies'] ? 'open' : ''}><summary>Removed case studies <span class="cnt">${removedStudies.length}</span></summary><div class="body"><p class="small">Removed from this device. Restoring keeps the lines switched off.</p>${removedStudies.map(c => `<div class="notebar"><span style="flex:1">${esc(c.title)}</span><button class="btn" data-restore-study="${esc(c.id)}" aria-label="Restore ${esc(c.title)} case study">Restore</button></div>`).join('')}</div></details>` : ''}
 `,
             ),
         )
@@ -231,9 +245,51 @@ export function renderLayers(view = 'layers', target = '#p-layers') {
         )
       : ''
   }`;
+  const refreshStudies = () => {
+    changed();
+    keepScroll(target, () => renderLayers(view, target));
+  };
+  $$(target + ' [data-remove-study]').forEach(b => {
+    b.onclick = () => {
+      const c = studies.find(c => c.id === b.dataset.removeStudy);
+      if (!c) return;
+      const layers = { [c.lineId]: S.layers[c.lineId], [c.fitId]: S.layers[c.fitId] };
+      const previousActive = [c.lineId, c.fitId].includes(S.active) ? S.active : null;
+      S.removedCaseStudies = [...new Set([...S.removedCaseStudies, c.id])];
+      S.layers[c.lineId] = false;
+      S.layers[c.fitId] = false;
+      if (previousActive) S.active = null;
+      refreshStudies();
+      const restore = $(target + ' [data-restore-study="' + c.id + '"]');
+      if (restore) {
+        restore.closest('details').open = true;
+        restore.focus({ preventScroll: true });
+      }
+      toastUndo('Removed “' + c.title + '”', () => {
+        S.removedCaseStudies = S.removedCaseStudies.filter(id => id !== c.id);
+        Object.assign(S.layers, layers);
+        if (previousActive && !S.active) S.active = previousActive;
+        refreshStudies();
+        $(target + ' [data-remove-study="' + c.id + '"]')?.focus({ preventScroll: true });
+      });
+    };
+  });
+  $$(target + ' [data-restore-study]').forEach(b => {
+    b.onclick = () => {
+      const c = removedStudies.find(c => c.id === b.dataset.restoreStudy);
+      if (!c) return;
+      S.removedCaseStudies = S.removedCaseStudies.filter(id => id !== c.id);
+      S.layers[c.lineId] = false;
+      S.layers[c.fitId] = false;
+      refreshStudies();
+      $(target + ' [data-remove-study="' + c.id + '"]')?.focus({ preventScroll: true });
+      toast('Restored “' + c.title + '”. Its lines are switched off.');
+    };
+  });
   $$(target + ' details.grp').forEach(
     d =>
       (d.ontoggle = () => {
+        if (!d.isConnected) return;
         OPEN[d.dataset.g] = d.open;
         // one main group open at a time keeps the screen short
         if (d.open && !d.classList.contains('sub'))
