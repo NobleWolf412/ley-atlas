@@ -125,6 +125,8 @@ const WD_QUERIES = [
   ['Q5393308', 'Buddhist temples', 'buddhist temple', 6],
   ['Q101659', 'Dolmens', 'dolmen', 2],
 ];
+import { notebookSnapshot, replaceNotebook } from '../state/research-notebook.js';
+
 function wdUrl(q) {
   const [, , type, sl] = WD_QUERIES.find(x => x[0] === q);
   const sparql = `# ${type}s with coordinates, known in at least ${sl} Wikipedia languages
@@ -233,7 +235,8 @@ export function csv() {
 }
 export function stateCode() {
   const body = {
-    v: 3,
+    v: 4,
+    researchNotebook: notebookSnapshot(),
     view: S.view,
     cam: S.cam,
     layers: S.layers,
@@ -252,7 +255,8 @@ export function stateCode() {
 }
 export function loadState(code) {
   const d = JSON.parse(decodeURIComponent(escape(atob(code))));
-  if (!d || ![1, 2, 3].includes(d.v)) throw new Error('bad');
+  if (!d || ![1, 2, 3, 4].includes(d.v)) throw new Error('bad');
+  if (d.v === 4) replaceNotebook(d.researchNotebook);
   Object.assign(S, {
     cam: d.cam,
     layers: { ...S.layers, ...d.layers, cat: { ...S.layers.cat, ...(d.layers?.cat || {}) } },

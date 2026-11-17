@@ -35,7 +35,11 @@ const HOSTS = {
   appearance: ['menu', 'Appearance'],
   tools: ['analysis', 'Map tools'],
 };
+import { screenHistory, captureScreen, restoreScreen } from './registry.js';
+import { emit } from '../core/events.js';
+
 export function v2Render() {
+  emit('ui:screen', V2.tab);
   const tools = !!V2.host,
     home = !V2.tab && !tools;
   $('#app').classList.toggle('v2-tools', tools);
@@ -108,6 +112,10 @@ function v2Parent() {
   return screenParent(V2.tab) || null;
 }
 export function v2Back() {
+  if (!V2.host && screenHistory(V2.tab) && history.state?.atlasPanel?.tab === V2.tab) {
+    history.back();
+    return;
+  }
   if (V2.host) {
     v2CloseHost();
     return;
@@ -124,6 +132,7 @@ export function v2Back() {
   v2Home();
 }
 export function v2Home() {
+  emit('ui:navigate', V2.tab, null);
   v2Leave();
   V2.tab = null;
   V2.layersOpen = false;
@@ -135,11 +144,20 @@ export function v2Home() {
   $('#v2-menu').focus({ preventScroll: true });
   req();
 }
-export function v2ChangeTab(t) {
+export function v2ChangeTab(t, navigation = {}) {
   if (!t) {
     v2Home();
     return;
   }
+  const previous = V2.tab;
+  if (navigation.history !== false && previous !== t && (screenHistory(previous) || screenHistory(t))) {
+    history.replaceState(
+      { ...history.state, atlasPanel: { tab: previous || 'explore', state: captureScreen(previous) } },
+      '',
+    );
+    history.pushState({ ...history.state, atlasPanel: { tab: t, state: captureScreen(t) } }, '');
+  }
+  emit('ui:navigate', previous, t);
   v2Leave();
   V2.tab = HOSTS[t] ? HOSTS[t][0] : t;
   V2.layersOpen = false;
@@ -261,7 +279,13 @@ export function initPanels() {
   $('#sheet').addEventListener('keydown', e => {
     if (e.key === 'Escape' && !e.target.closest('input, textarea, select')) v2Back();
   });
-  addEventListener('popstate', () => {
+  addEventListener('popstate', event => {
+    if (event.state?.atlasPanel) {
+      const { tab, state } = event.state.atlasPanel;
+      restoreScreen(tab, state);
+      v2ChangeTab(tab, { history: false });
+      return;
+    }
     if (V2.hist) {
       V2.hist = false;
       if (S.sel || V2.hl) v2Done(true);

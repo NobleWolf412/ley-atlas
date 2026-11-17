@@ -118,6 +118,9 @@ export function v2Analyze() {
   return (
     v2Peek(`${esc(KINDTXT[d.kind])} · ±${fmtKm(d.w)}`) +
     `<h2 style="margin:0 0 8px">${esc(L.short || L.name)}</h2>` +
+    (L.researchId
+      ? `<div class="v2-card"><p class="v2-muted">Calculated model from unverified research coordinates.</p>${v2ButtonId('research-open', L.researchId, 'Back to collection')}</div>`
+      : '') +
     `<div class="v2-card tinted">
       <p class="v2-muted" style="margin:0 0 6px">${lenTxt} · heading ${sg.brg.toFixed(1)}°</p>
       <p class="v2-glance"><b>Within ±${fmtKm(d.w)}:</b> ${crosses}</p>

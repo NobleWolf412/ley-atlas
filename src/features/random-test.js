@@ -1,7 +1,7 @@
 // Is it unusual? Random-line test
 import { fairP, independentDirections } from '../core/stats.js';
 import { GEO } from '../core/geo.js';
-import { $, $$, R, esc, nf, wrap } from '../core/util.js';
+import { $, $$, esc, nf, wrap } from '../core/util.js';
 import { INTS } from '../domain/analysis.js';
 import { LINEBY, activeLine } from '../domain/lines.js';
 import { ALLP, findPoint, rebuildPoints, srcOn } from '../domain/points.js';
@@ -59,6 +59,8 @@ function depPool(g) {
   return (DEPPOOL[g] = out);
 }
 const LAB_OPEN = { site: false, line: true, crossings: false };
+import { compareLine } from '../core/line-comparison.js';
+
 export function renderLab() {
   $$('#p-lab [data-lab-section]').forEach(d => {
     LAB_OPEN[d.dataset.labSection] = d.open;
@@ -214,40 +216,13 @@ function runTest(mode) {
   const pool = POOLS()
     .find(p => p[0] === S.control)[2]
     .filter(p => !L.anchors.includes(p.id) && !anchors.some(a => GEO.dist(a.lat, a.lon, p.lat, p.lon) < 0.3));
-  const V = pool.map(p => p.v),
-    swv = Math.sin(w / R),
-    full = !isFinite(sg.len);
-  const count = seg => {
-    const f = GEO.frame(seg.o[0], seg.o[1], seg.brg);
-    let n = 0;
-    if (full) {
-      for (const v of V) if (Math.abs(f.n[0] * v[0] + f.n[1] * v[1] + f.n[2] * v[2]) <= swv) n++;
-      return n;
-    }
-    const L2 = { ...seg, f };
-    for (const v of V) {
-      if (Math.abs(f.n[0] * v[0] + f.n[1] * v[1] + f.n[2] * v[2]) > swv) continue;
-      const g = GEO.ll(v);
-      if (GEO.distToLine(L2, g[0], g[1]).d <= w) n++;
-    }
-    return n;
-  };
-  const obs = count(sg),
-    r = GEO.rng(20261108),
-    N = 2000,
-    hist = [];
-  for (let i = 0; i < N; i++)
-    hist.push(
-      count({ o: mode === 'rotate' ? sg.o : GEO.randomPoint(r), brg: r() * 360, len: sg.len, back: sg.back }),
-    );
-  const ge = hist.filter(h => h >= obs).length,
-    mean = hist.reduce((a, b) => a + b, 0) / N;
+  const { obs, N, p, mean, hist } = compareLine(sg, pool, w, mode);
   TEST = {
     mode,
     res: {
       obs,
       N,
-      p: (ge + 1) / (N + 1),
+      p,
       mean,
       hist,
       w,

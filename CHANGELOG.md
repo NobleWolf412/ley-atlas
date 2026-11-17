@@ -1,5 +1,14 @@
 # Ley Atlas changelog
 
+## Unreleased: Research Library
+
+- Explore now contains Research Collections: featured/all/saved views, search and filters, source-aware site profiles, and Overview / Sites / Geometry / Analysis / Sources tabs.
+- 17 unverified research drafts retain 80 source memberships, including 78 rows from 13 dossier tables. The full 15-table / 86-row intake is reconciled in a manifest; two cultural tables remain held outside the public bundle. Original documents and personal interpretations are excluded.
+- Reversible previews show schematic sequences, source nodes, exact meridians and latitude parallels. Endpoint and least-squares great-circle models are explicitly calculations. Unsupported network, cultural and sky methods cannot run a generic line test.
+- Eligible models use the existing seeded 2,000-control comparison engine with isolated results, source-anchor exclusion, coverage and selection caveats. Explicitly save a computed model to My lines to use the existing Analyze tools without replacing the working line.
+- Local bookmarks, notes, investigation fingerprints and result snapshots, plus a source-attributed history timeline. Notebook export/import merges preserve existing local entries; full backups use v4 and restore v1–v4.
+- Keyboard tabs and shared browser/panel Back behavior; bundled content works offline. Data validation runs before every production build.
+
 ## 2.9 (16 Nov 2026): Atlas workspace
 
 - A unified menu: **My lines**, **Layers**, **Analyze**, **Resources**, and **Appearance**. The map still opens on its own.
