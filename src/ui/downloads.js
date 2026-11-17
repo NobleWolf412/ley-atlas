@@ -80,7 +80,7 @@ export function v2SaveMapPicture() {
 export function v2RestoreBackup() {
   openHtml(
     'Restore a backup',
-    '<p class="small">Choose a backup file, or paste its contents. Lines with the same id are replaced; nothing else is deleted.</p><label class="btn primary filebtn">Choose file<input type="file" id="rb-file" accept=".json,application/json,text/plain" hidden></label><textarea id="rb-text" rows="5" placeholder="Paste the backup here"></textarea><button class="btn" id="rb-go">Restore</button><p class="small" id="rb-msg"></p>',
+    '<p class="small">Choose a backup file, or paste its contents. Saved lines and markers are restored from this backup. Imported datasets are added to your collection.</p><label class="btn primary filebtn">Choose file<input type="file" id="rb-file" accept=".json,application/json,text/plain" hidden></label><textarea id="rb-text" rows="5" placeholder="Paste the backup here"></textarea><button class="btn" id="rb-go">Restore</button><p class="small" id="rb-msg"></p>',
   );
   const run = txt => {
     try {
@@ -88,6 +88,7 @@ export function v2RestoreBackup() {
       const code = j.state || txt.trim();
       loadState(code);
       V2.disc = null;
+      V2.host = null;
       V2.tab = 'saved';
       $('#modal').hidden = true;
       v2Render();

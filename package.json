@@ -1,6 +1,6 @@
 {
   "name": "ley-atlas",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,6 +23,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",
+    "jsdom": "^29.1.1",
     "prettier": "^3.10.1",
     "vite": "^8.3.8",
     "vite-plugin-pwa": "^2.0.0",

@@ -84,7 +84,7 @@ function screen() {
   if (!run)
     body = `<div class="v2-actions">${v2Button('align-run', 'Search the sites in view', 'primary')}</div>`;
   else if (run.state === 'toomany')
-    body = `<p class="v2-note">${nf(run.n)} sites are in view; the search handles up to ${MAX_SITES}. Zoom in, or switch some site types off in Map layers.</p><div class="v2-actions">${v2Button('align-run', 'Try again', 'primary')}</div>`;
+    body = `<p class="v2-note">${nf(run.n)} sites are in view; the search handles up to ${MAX_SITES}. Zoom in, or switch some site types off in Layers.</p><div class="v2-actions">${v2Button('align-run', 'Try again', 'primary')}</div>`;
   else if (run.state === 'toofew')
     body = `<p class="v2-note">Only ${run.n} site${run.n === 1 ? ' is' : 's are'} in view. Zoom out a little.</p><div class="v2-actions">${v2Button('align-run', 'Try again', 'primary')}</div>`;
   else if (run.state === 'running')
@@ -142,7 +142,7 @@ function drawLines(P) {
 }
 
 export function initAlignments() {
-  registerScreen('align', screen, { title: 'Find alignments', parent: 'menu' });
+  registerScreen('align', screen, { title: 'Find alignments', parent: 'analysis' });
   registerAction('align', () => v2ChangeTab('align'));
   registerAction('align-run', () => {
     start();

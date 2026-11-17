@@ -454,7 +454,7 @@ export function lmRankLine(L) {
   const M = LM,
     sc = M.scores.get(L.anchors[1]);
   if (!sc) return '';
-  return `<div class="lm-card"><span class="v2-kicker">Match from ${esc(M.A.n)}: this direction vs the 30 beside it</span>${lmBar(sc)}<small>${esc(lmWhy(sc))}${L.pickedBy ? ' · You chose this end after seeing these scores, so a high match is expected; “Is it unusual?” allows for that.' : ''}</small></div>`;
+  return `<div class="lm-card"><span class="v2-kicker">Match from ${esc(M.A.n)}: this direction vs the 30 beside it</span>${lmBar(sc)}<small>${esc(lmWhy(sc))}${L.pickedBy ? ' · You chose this end after seeing these scores, so a high match is expected; the line comparison allows for that.' : ''}</small></div>`;
 }
 export function lmMarkPicked() {
   if (!S.work?.sites || !LM || LM.A.id !== S.work.sites[0]) return;

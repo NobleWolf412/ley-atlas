@@ -10,9 +10,8 @@ import { showDeposit, showFault } from '../panels/underground-detail.js';
 import { closeDetail, showDetail } from '../panels/detail.js';
 import { V2, v2IsAdvanced } from '../state/preferences.js';
 import { v2Done, v2Home, v2KeepSelVisible, v2PushHistory, v2Render } from './panels.js';
-import { changed, setSheet } from './sheet.js';
+import { changed, renderTab, setSheet } from './sheet.js';
 import { v2MapPoint } from '../features/create-lines.js';
-import { renderLab } from '../features/random-test.js';
 import { setBanner, setMode } from './modes.js';
 import { rebuildPoints } from '../domain/points.js';
 import { on } from '../core/events.js';
@@ -85,7 +84,7 @@ function modePoint(ll) {
   if (S.mode === 'measure') {
     if (S.measure.length >= 3) S.measure = [];
     S.measure.push(ll);
-    renderLab();
+    renderTab(S.tab);
     setBanner();
     req();
     return;

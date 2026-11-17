@@ -18,11 +18,12 @@ import { renderKey, setFocus } from './map-chrome.js';
 import { v2ChangeTab, v2Highlight, v2Home, v2Render, v2SelectSite } from './panels.js';
 import { v2HandleAction } from './actions.js';
 import { changed } from './sheet.js';
+import { renderAppearance } from '../panels/layers-pane.js';
 import { setCATCOUNT, v2OpenBrowser } from './site-lists.js';
 
 export function initEvents() {
   // ---------- events ----------
-  $('#v2panel').addEventListener('click', e => {
+  $('#sheet').addEventListener('click', e => {
     const t = e.target;
     const sa = t.closest('[data-seta]');
     if (sa) {
@@ -109,6 +110,7 @@ export function initEvents() {
     if (lc) {
       V2.lineColor = lc.dataset.linecol || null;
       v2Persist();
+      if (V2.host === 'appearance') renderAppearance();
       v2Render();
       req();
       return;
@@ -116,7 +118,7 @@ export function initEvents() {
     const b = t.closest('[data-v2]');
     if (b) v2HandleAction(b.dataset.v2, b.dataset.id);
   });
-  $('#v2panel').addEventListener('input', e => {
+  $('#sheet').addEventListener('input', e => {
     if (e.target.id === 'v2brg') V2.bear.brg = e.target.value;
     if (e.target.id === 'v2search') {
       V2.query = e.target.value;
@@ -131,7 +133,7 @@ export function initEvents() {
     }
     if (e.target.id === 'v2name' && S.work) S.work.name = e.target.value;
   });
-  $('#v2panel').addEventListener('change', e => {
+  $('#sheet').addEventListener('change', e => {
     if (e.target.matches('[data-country]')) {
       V2.country = e.target.value;
       V2.limit = 60;
@@ -157,7 +159,7 @@ export function initEvents() {
       req();
     }
   });
-  $('#v2layers').addEventListener('click', e => {
+  $('#sheet').addEventListener('click', e => {
     const ud = e.target.closest('[data-ugs-dep]'),
       uf = e.target.closest('[data-ugs-fault]');
     if (ud || uf) {
@@ -170,6 +172,7 @@ export function initEvents() {
         S.under.faults = true;
       }
       v2Persist();
+      if (V2.host === 'appearance') renderAppearance();
       v2Render();
       renderKey();
       req();
@@ -179,14 +182,13 @@ export function initEvents() {
     if (z) {
       V2.zoomMode = z.dataset.zm;
       v2Persist();
+      if (V2.host === 'appearance') renderAppearance();
       v2Render();
       req();
       return;
     }
-    const b = e.target.closest('[data-v2]');
-    if (b) v2HandleAction(b.dataset.v2, b.dataset.id);
   });
-  $('#v2layers').addEventListener('change', e => {
+  $('#sheet').addEventListener('change', e => {
     const t = e.target.dataset.tgl;
     if (!t) return;
     if (t.startsWith('cat:')) {
@@ -213,7 +215,7 @@ export function initEvents() {
     renderKey();
     req();
   });
-  $('#v2layers').addEventListener('input', e => {
+  $('#sheet').addEventListener('input', e => {
     if (e.target.matches('[data-v2opacity]')) {
       V2.overlayOpacity = +e.target.value;
       $('#v2opacitylabel').textContent = V2.overlayOpacity + '%';
@@ -231,7 +233,7 @@ export function initEvents() {
     v2OpenBrowser('a', true);
   };
   $('#v2-menu').onclick = () => {
-    if (V2.tab === 'menu') v2Home();
+    if (V2.tab === 'menu' && !V2.host) v2Home();
     else v2ChangeTab('menu');
   };
   $('#v2-search').onclick = () => {

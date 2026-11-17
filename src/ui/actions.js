@@ -2,7 +2,7 @@
 import { runAction } from './registry.js';
 import { v2OpenHost } from './panels.js';
 import { v2Download } from './downloads.js';
-import { v2ChangeTab, v2Done, v2Render } from './panels.js';
+import { v2Back, v2ChangeTab, v2Done, v2Render } from './panels.js';
 import { v2OpenBrowser } from './site-lists.js';
 import { V2, v2Persist } from '../state/preferences.js';
 import {
@@ -71,10 +71,7 @@ export function v2HandleAction(action, id) {
       v2ChangeTab('saved');
       break;
     case 'menu-layers':
-      V2.tab = null;
-      V2.host = null;
-      V2.layersOpen = true;
-      v2Render();
+      v2OpenHost('layers');
       break;
     case 'site-line': {
       const id = S.sel?.id;
@@ -141,12 +138,10 @@ export function v2HandleAction(action, id) {
       v2ChangeTab('draw');
       break;
     case 'layers':
-      V2.layersOpen = !V2.layersOpen;
-      v2Render();
+      v2OpenHost('layers');
       break;
     case 'layers-close':
-      V2.layersOpen = false;
-      v2Render();
+      v2Back();
       break;
     case 'layers-clear':
       for (const k of Object.keys(S.under)) S.under[k] = false;

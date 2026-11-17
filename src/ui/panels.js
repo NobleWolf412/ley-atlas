@@ -1,9 +1,12 @@
 // Panels: explore, draw, analyze, menu, saved
 import { screenParent, screenTitle } from './registry.js';
 import { registerScreen, screenHtml } from './registry.js';
-import { v2LayersHtml, v2Menu, v2Saved } from './screens/menu.js';
+import { v2Menu, v2Saved } from './screens/menu.js';
 import { v2Explore } from './screens/explore.js';
 import { v2Draw } from './screens/draw-line.js';
+import { v2Analysis } from './screens/analysis.js';
+import { NAVIGATION } from './navigation.js';
+import { registerAction } from './registry.js';
 import { v2Analyze } from './screens/analyze.js';
 import { $ } from '../core/util.js';
 import { activeLine } from '../domain/lines.js';
@@ -16,7 +19,6 @@ import { req } from '../map/draw.js';
 import { fmtKm } from '../core/format.js';
 import { setView } from '../map/interaction.js';
 import { showDetail } from '../panels/detail.js';
-import { renderLayers } from '../panels/layers-pane.js';
 import { revealPoint } from '../panels/lines-pane.js';
 import { V2 } from '../state/preferences.js';
 import { S } from '../state/state.js';
@@ -27,29 +29,30 @@ import { changed, selectTab, setSheet } from './sheet.js';
 // Full pages that open inside a tab (with a Back button), instead of a separate Tools tab
 const HOSTS = {
   detail: ['explore', 'Full record'],
-  lab: ['analyze', 'Is it unusual?'],
-  data: ['saved', 'Import & data sources'],
+  lab: ['analysis', 'Comparisons'],
+  data: ['menu', 'Resources'],
+  layers: ['menu', 'Layers'],
+  appearance: ['menu', 'Appearance'],
+  tools: ['analysis', 'Map tools'],
 };
 export function v2Render() {
   const tools = !!V2.host,
     home = !V2.tab && !tools;
   $('#app').classList.toggle('v2-tools', tools);
+  $('#app').classList.toggle('atlas-menu', V2.tab === 'menu' && !tools);
   $('#app').classList.toggle('v2-home', home); // map only: the panel is closed
   $('#app').classList.toggle('v2-analyze', V2.tab === 'analyze');
   $('#v2tools').hidden = home;
+  $('#v2-menu').setAttribute('aria-expanded', String(V2.tab === 'menu' && !tools));
   if (!home) {
     const par = v2Parent();
+    $('#v2hostback').hidden = !par;
     $('#v2hostback').textContent = par ? '← ' + V2TITLE(par, true) : '✕ Close';
     $('#v2hostback').setAttribute('aria-label', par ? 'Back to ' + V2TITLE(par, true) : 'Close the panel');
     $('#v2hosttitle').textContent = tools ? HOSTS[V2.host][1] : V2TITLE(V2.tab);
   }
   $('#v2-draw').hidden = S.mode !== 'draw'; // only needed on the map while freehand drawing
   $('#v2cta').hidden = !home || S.mode === 'draw' || !!activeLine();
-  $('#v2layers').hidden = !V2.layersOpen;
-  if (V2.layersOpen) {
-    $('#v2layers-top').innerHTML = v2LayersHtml();
-    renderLayers();
-  }
   v2Alert();
   const h = $('#v2hint');
   h.hidden = S.mode !== 'draw';
@@ -75,6 +78,7 @@ export function v2Render() {
     }, 20);
 }
 export function v2Leave() {
+  if (V2.host === 'tools' && ['measure', 'marker'].includes(S.mode)) setMode(null);
   V2.host = null;
 }
 // one header for every panel: where Back goes, and what each panel is called
@@ -90,8 +94,9 @@ const V2TITLE = (t, short) =>
             : 'Site'
       : 'Search',
     draw: S.work ? 'Your line' : 'Draw a line',
-    analyze: short ? 'Details' : 'Along this line',
+    analyze: 'Line details',
     saved: 'My lines',
+    analysis: 'Analyze',
     menu: 'Menu',
   })[t] ||
   screenTitle(t) ||
@@ -119,7 +124,7 @@ export function v2Back() {
   v2Home();
 }
 export function v2Home() {
-  V2.host = null;
+  v2Leave();
   V2.tab = null;
   V2.layersOpen = false;
   if (S.mode === 'draw') {
@@ -127,6 +132,7 @@ export function v2Home() {
     V2.drawPoints = [];
   }
   v2Render();
+  $('#v2-menu').focus({ preventScroll: true });
   req();
 }
 export function v2ChangeTab(t) {
@@ -134,12 +140,13 @@ export function v2ChangeTab(t) {
     v2Home();
     return;
   }
-  V2.host = null;
+  v2Leave();
   V2.tab = HOSTS[t] ? HOSTS[t][0] : t;
   V2.layersOpen = false;
   v2Render();
   $('#v2panel').scrollTop = 0;
   if ($('#sheet').classList.contains('peek')) setSheet('half');
+  $('#v2hosttitle').focus({ preventScroll: true });
 }
 export function v2OpenHost(h) {
   if (h === 'detail' && !S.sel) return;
@@ -154,9 +161,10 @@ export function v2OpenHost(h) {
   if (h === 'detail') showDetail();
   else selectTab(h);
   if ($('#sheet').classList.contains('peek')) setSheet('half');
+  $('#v2hosttitle').focus({ preventScroll: true });
 }
 export function v2CloseHost() {
-  V2.host = null;
+  v2Leave();
   v2Render();
   $('#v2panel').scrollTop = 0;
 }
@@ -238,7 +246,21 @@ export function initPanels() {
   registerScreen('analyze', v2Analyze);
   registerScreen('saved', v2Saved);
   registerScreen('menu', v2Menu);
+  registerScreen('analysis', v2Analysis, { title: 'Analyze', parent: 'menu' });
+  for (const item of NAVIGATION) {
+    registerAction(item.action, () => {
+      if (HOSTS[item.id]) {
+        v2ChangeTab('menu');
+        v2OpenHost(item.id);
+      } else v2ChangeTab(item.id);
+    });
+  }
+  registerAction('menu-tools', () => v2OpenHost('tools'));
   $('#v2hostback').onclick = v2Back;
+  $('#v2close').onclick = v2Home;
+  $('#sheet').addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !e.target.closest('input, textarea, select')) v2Back();
+  });
   addEventListener('popstate', () => {
     if (V2.hist) {
       V2.hist = false;

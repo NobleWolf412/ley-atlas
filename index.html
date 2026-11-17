@@ -35,7 +35,13 @@
             <button id="v-map" aria-pressed="true">Map</button>
             <button id="v-globe" aria-pressed="false">Globe</button>
           </div>
-          <button class="iconbtn" id="themebtn" title="Light or dark" aria-label="Switch light or dark theme">
+          <button
+            class="iconbtn"
+            id="themebtn"
+            hidden
+            title="Light or dark"
+            aria-label="Switch light or dark theme"
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
               <circle cx="12" cy="12" r="4.5" />
               <path
@@ -127,10 +133,7 @@
           ><button class="v2-mapbtn primary" id="v2-draw" hidden>✕ Cancel drawing</button>
         </div>
         <div id="v2hint" role="status" aria-live="polite" hidden></div>
-        <div id="v2layers" hidden role="dialog" aria-label="Layers">
-          <div id="v2layers-top"></div>
-          <section id="p-layers"></section>
-        </div>
+
         <div id="v2alert" hidden role="status" aria-live="polite"></div>
         <button id="v2cta" hidden>＋ Draw a line</button>
 
@@ -139,12 +142,17 @@
       <aside id="sheet" class="peek">
         <button class="grab" id="grab" aria-label="Resize panel"></button>
         <div id="v2tools" hidden>
-          <button id="v2hostback" class="v2-hostback">← Back</button><b id="v2hosttitle"></b>
+          <button id="v2hostback" class="v2-hostback">← Back</button>
+          <h2 id="v2hosttitle" tabindex="-1"></h2>
+          <button id="v2close" class="atlas-close" aria-label="Close panel">✕</button>
         </div>
         <section class="pane" id="p-lab" hidden></section>
         <section class="pane" id="p-data" hidden></section>
+        <section class="pane" id="p-layers" hidden></section>
+        <section class="pane" id="p-appearance" hidden></section>
+        <section class="pane" id="p-tools" hidden></section>
         <section class="pane" id="p-detail" hidden></section>
-        <section id="v2panel" role="tabpanel"></section>
+        <section id="v2panel" role="region" aria-label="Workspace"></section>
       </aside>
     </div>
     <div id="modal" class="modal" hidden>

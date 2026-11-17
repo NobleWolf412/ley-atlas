@@ -12,7 +12,7 @@ export function v2ButtonId(action, id, label, cls = '') {
 }
 // rows you can swipe left to reveal Delete (or swipe all the way to delete); the action still offers Undo
 export function v2SwipeRow(action, id, name, inner) {
-  return `<div class="v2-swipe"><button class="v2-swipe-del" data-v2="${action}" data-id="${esc(id)}" tabindex="-1" aria-label="Delete ${esc(name)}">Delete</button><div class="v2-swipe-row" data-swipe="${action}" data-id="${esc(id)}">${inner}</div></div>`;
+  return `<div class="v2-swipe"><button class="v2-swipe-del" data-v2="${action}" data-id="${esc(id)}" tabindex="-1" aria-label="Delete ${esc(name)}">Delete</button><div class="v2-swipe-row" data-swipe="${action}" data-id="${esc(id)}"><div class="atlas-swipe-content">${inner}</div><button class="atlas-remove" data-v2="${action}" data-id="${esc(id)}" aria-label="Delete ${esc(name)}">×</button></div></div>`;
 }
 export function v2Button(action, label, cls = '') {
   return `<button class="v2-action ${cls}" data-v2="${action}">${label}</button>`;
