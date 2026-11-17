@@ -111,6 +111,23 @@ describe('workspace organization and control wiring', () => {
     expect(layers.querySelector('[data-src], [data-imp], [data-zm], [data-ugs-dep]')).toBeNull();
     expect(layers.querySelectorAll('[data-cat]').length).toBe(11);
   });
+  it('refreshes underground switches and counts after clearing all layers', () => {
+    S.under.iron = true;
+    S.under.faults = true;
+    V2.host = 'layers';
+    V2.tab = 'menu';
+    initEvents();
+    renderLayers();
+    expect(document.querySelector('#p-layers [data-g="under"] > summary').textContent).toContain('2 on');
+    document.querySelector('#p-layers [data-v2="layers-clear"]').click();
+    expect(Object.values(S.under).some(Boolean)).toBe(false);
+    expect(document.querySelector('#p-layers [data-g="under"] > summary').textContent).toContain('all off');
+    expect(
+      [...document.querySelectorAll('#p-layers [data-ug]')].every(
+        b => b.getAttribute('aria-checked') === 'false',
+      ),
+    ).toBe(true);
+  });
   it('shows and updates dataset switches in Resources', () => {
     renderData();
     const source = document.querySelector('#p-data [data-src="fort"]');
