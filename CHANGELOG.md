@@ -1,5 +1,9 @@
 # Ley Atlas changelog
 
+## Unreleased: Centre phone Search
+
+- Search sites is now centred on the phone screen beneath Draw a line, with Menu anchored at the bottom right. Narrow phones keep a clear gap between both controls.
+
 ## Unreleased: Bottom-right phone controls
 
 - Menu now sits in the bottom-right corner on phones, with a compact Search sites button immediately to its left.
