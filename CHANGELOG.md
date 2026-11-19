@@ -1,5 +1,11 @@
 # Ley Atlas changelog
 
+## Unreleased: Live map layers and legend
+
+- The map now has a **Layers** button. Its live tray keeps the map available while switching site types, datasets/imports, minerals, faults, plate boundaries, magnetic field, lines and map overlays. Underground points/density, opacity and site density are available there too.
+- The on-map **Legend** shows enabled mineral colours, Earth structure, dataset-specific site symbols, line styles and finding colours. It follows light/dark palettes, distinguishes density from mineral concentration, and can be collapsed.
+- Layer changes preserve working/saved lines, imported records and camera position. The tray remains open for repeated changes; settings use the existing saves and backups. Menu and Search keep their phone positions.
+
 ## Unreleased: Centre phone Search
 
 - Search sites is now centred on the phone screen beneath Draw a line, with Menu anchored at the bottom right. Narrow phones keep a clear gap between both controls.

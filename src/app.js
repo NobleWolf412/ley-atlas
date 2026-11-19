@@ -45,6 +45,7 @@ import { initSkyCheck } from './features/sky-check.js';
 import { initAlignments } from './features/alignments.js';
 import { initAnalyze } from './ui/screens/analyze.js';
 import { initResearchLibrary } from './features/research-library.js';
+import { initMapControls } from './features/map-controls.js';
 
 export function startApp() {
   initUtil();
@@ -79,6 +80,7 @@ export function startApp() {
   initAlignments();
   initAnalyze();
   initResearchLibrary();
+  initMapControls();
   initPanels();
   initEvents();
   initSwipeDelete();

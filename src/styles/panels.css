@@ -27,9 +27,6 @@
 #app:not(.v2-advanced) #street {
   display: none !important;
 }
-#app:not(.v2-advanced) #lyr {
-  display: none;
-}
 #app:not(.v2-advanced) .brand {
   border-radius: 14px;
   padding: 9px 13px;
