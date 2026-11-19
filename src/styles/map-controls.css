@@ -1,0 +1,296 @@
+/* A small live tray, with no backdrop: the map stays available for comparison. */
+#lyr {
+  width: 52px;
+  padding: 4px;
+  flex-direction: column;
+  gap: 2px;
+}
+#lyr small {
+  font-size: 10px;
+  line-height: 1;
+}
+#lyr[aria-expanded='true'] {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+#map-layer-popover {
+  position: absolute;
+  z-index: 21;
+  top: 164px;
+  left: 16px;
+  width: min(360px, calc(100% - 88px));
+  max-height: min(58vh, 520px);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+#map-layer-popover > header,
+.legend-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line2);
+  flex: none;
+}
+#map-layer-title {
+  font: 500 23px var(--f-display);
+  margin: 0;
+}
+#map-layer-title:focus {
+  outline: none;
+}
+#map-layer-close,
+#keyhide {
+  border: 0;
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--panel2);
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 19px;
+  flex: none;
+}
+#map-layer-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 12px 12px;
+}
+#map-layer-body summary {
+  cursor: pointer;
+  min-height: 48px;
+  align-content: center;
+  font-weight: 700;
+}
+#map-layer-body summary small {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 11px;
+  margin-left: 8px;
+}
+#map-layer-body > details + details {
+  border-top: 1px solid var(--line2);
+}
+.map-layer-group-body .small {
+  margin: 0 0 8px;
+}
+.map-layer-row {
+  display: flex;
+  width: 100%;
+  min-height: 50px;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  font: 600 12px var(--f-body);
+  border: 0;
+  border-bottom: 1px solid var(--line2);
+  color: var(--text);
+  background: transparent;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.map-layer-row > span:nth-child(2) {
+  flex: 1;
+}
+.map-layer-row .tog {
+  flex: none;
+  pointer-events: none;
+}
+.map-layer-row[aria-checked='false'] .tog {
+  background: var(--line);
+}
+.map-layer-row[aria-checked='false'] .tog::after {
+  transform: translateX(0);
+}
+.map-layer-row[aria-checked='true'] .tog {
+  background: var(--accent);
+}
+.map-layer-row[aria-checked='true'] .tog::after {
+  transform: translateX(18px);
+}
+.map-layer-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  flex: none;
+}
+.map-layer-icon:empty {
+  display: none;
+}
+.map-layer-icon svg {
+  width: 30px;
+  height: 20px;
+}
+.map-layer-row[aria-checked='false'] .map-layer-icon {
+  opacity: 0.55;
+}
+.map-layer-bulk {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.map-layer-bulk .btn,
+.map-layer-style button {
+  min-height: 44px;
+}
+.map-layer-style {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12px;
+}
+.map-layer-style .seg {
+  flex-wrap: wrap;
+  justify-content: end;
+}
+.map-layer-opacity {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  margin: 12px 0;
+  font-size: 12px;
+}
+.map-layer-opacity input {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 44px;
+}
+
+/* Show the existing key in map-first mode, with enabled underground colours first. */
+#app.v2-home #key:not([hidden]),
+#app.v2-home #keybtn:not([hidden]) {
+  display: block !important;
+}
+#app.map-layers-open #key,
+#app.map-layers-open #keybtn {
+  visibility: hidden;
+}
+#key {
+  padding: 0;
+  left: 16px;
+  right: auto;
+  bottom: 96px;
+  width: min(340px, calc(100% - 88px));
+  max-width: none;
+  max-height: min(28vh, 230px);
+  overflow: auto;
+  background: var(--panel);
+}
+#key .legend-head {
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  z-index: 1;
+}
+.legend-head strong {
+  font-size: 13px;
+}
+.legend-head small {
+  display: block;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 10px;
+  margin-top: 2px;
+}
+.legend-body {
+  padding: 10px 12px;
+}
+.legend-section h3 {
+  font: 700 11px var(--f-body);
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.legend-section + .legend-section {
+  margin-top: 10px;
+}
+.legend-items {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px 12px;
+}
+#key .legend-item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 6px;
+  white-space: normal;
+  font-size: 11px;
+}
+#key .legend-item > span {
+  display: block;
+  white-space: normal;
+}
+.legend-item > svg,
+.legend-item > i {
+  flex: none;
+  width: 20px;
+  height: 18px;
+}
+.legend-density {
+  background: radial-gradient(ellipse, var(--legend-colour), transparent 75%);
+}
+.legend-item > .legend-glow {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.legend-note {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 8px 0;
+}
+#key details > summary {
+  min-height: 44px;
+  align-content: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 11px;
+}
+#keybtn {
+  bottom: 96px;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 10px 14px;
+}
+#app.v2-home:has(#v2alert:not([hidden])) #key,
+#app.v2-home:has(#v2alert:not([hidden])) #keybtn {
+  bottom: 140px;
+}
+@media (max-width: 700px), (orientation: landscape) and (max-width: 1100px) and (max-height: 520px) {
+  #lyr {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  #v2bar:has(#v2-draw:not([hidden])) #lyr {
+    display: none;
+  }
+  #map-layer-popover {
+    position: fixed;
+    top: auto;
+    left: max(16px, env(safe-area-inset-left, 0px));
+    right: max(16px, env(safe-area-inset-right, 0px));
+    bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-height: min(54dvh, 440px);
+  }
+  #app.v2-home #key,
+  #app.v2-home #keybtn {
+    bottom: calc(224px + env(safe-area-inset-bottom, 0px));
+    max-height: min(25dvh, 200px);
+  }
+  #app.v2-home:has(#v2alert:not([hidden])) #key,
+  #app.v2-home:has(#v2alert:not([hidden])) #keybtn {
+    bottom: calc(224px + env(safe-area-inset-bottom, 0px));
+  }
+}

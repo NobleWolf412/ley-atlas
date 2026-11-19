@@ -244,5 +244,5 @@ export function initEvents() {
     v2ChangeTab('explore');
     setTimeout(() => $('#v2search')?.focus(), 80);
   };
-  $('#lyr').onclick = () => v2HandleAction('layers');
+  $('#lyr').onclick = () => v2HandleAction('map-layers');
 }
