@@ -1,5 +1,11 @@
 # Ley Atlas changelog
 
+## Unreleased: QA stabilization
+
+- Saved research investigations reopen with their model, corridor, dataset and control settings after a refresh. Restored results show that they are saved instead of offering an inactive save button.
+- Cancelling a map touch no longer selects a site, closes a panel, starts a double-tap zoom or launches inertia.
+- Text checkouts use LF endings on Windows as well as CI. Node requirements now match the test runner.
+
 ## Unreleased: Live map layers and legend
 
 - The map now has a **Layers** button. Its live tray keeps the map available while switching site types, datasets/imports, minerals, faults, plate boundaries, magnetic field, lines and map overlays. Underground points/density, opacity and site density are available there too.

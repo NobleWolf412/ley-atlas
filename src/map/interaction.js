@@ -18,6 +18,13 @@ const up = e => {
   if (!ptrs.has(e.pointerId)) return;
   ptrs.delete(e.pointerId);
   const now = performance.now();
+  if (e.type === 'pointercancel') {
+    tapStart = null;
+    lastTap = null;
+    vel = null;
+    gest = ptrs.size ? snapshotGesture() : null;
+    return;
+  }
   if (tapStart && now - tapStart.t < 400) {
     if (
       lastTap &&
