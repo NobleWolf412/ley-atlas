@@ -23,7 +23,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the history.
 
 ## Run it locally
 
-Needs Node 20 or newer.
+Needs Node 22.12+ (22.x), Node 24.x, or Node 26+. CI uses Node 22.
 
 ```bash
 npm install

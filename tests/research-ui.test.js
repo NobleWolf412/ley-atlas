@@ -86,6 +86,10 @@ beforeEach(() => {
     preview: null,
     results: {},
     running: false,
+    width: 5,
+    model: 'endpoints',
+    pool: 'unesco',
+    mode: 'rotate',
   });
   history.replaceState(null, '');
   rebuildPoints();
@@ -202,6 +206,23 @@ it('promotes a calculated model without overwriting work or duplicating an uncha
 });
 
 describe('notebook durability and backup compatibility', () => {
+  it('restores saved investigation controls after refresh without offering an inactive save button', async () => {
+    openResearch('michael');
+    Object.assign(researchUI, { width: 7.5, model: 'fit', pool: 'fort', mode: 'random' });
+    runAction('research-run');
+    await vi.waitFor(() => expect(researchUI.results.michael).toBeDefined());
+    runAction('research-save-run');
+    const saved = structuredClone(researchNote('michael').investigation);
+    Object.assign(researchUI, { results: {}, width: 5, model: 'endpoints', pool: 'unesco', mode: 'rotate' });
+    initResearchNotebook();
+    openResearch('michael');
+    runAction('research-tab', 'analysis');
+    expect(researchUI).toMatchObject({ width: 7.5, model: 'fit', pool: 'fort', mode: 'random' });
+    expect(document.querySelector('[data-research-setting="width"]').value).toBe('7.5');
+    expect(document.querySelector('[data-v2="research-save-run"]')).toBeNull();
+    expect(document.querySelector('[role="tabpanel"]').textContent).toContain('Saved on this device');
+    expect(researchNote('michael').investigation).toEqual(saved);
+  });
   it('round trips notebook, working/saved lines and imports in backup v4', () => {
     saveResearchNote('michael', 'Private <script>note</script>', true);
     S.userLines = [{ id: 'u1', name: 'Saved', o: [51, 0], brg: 10, len: 100, anchors: [] }];
